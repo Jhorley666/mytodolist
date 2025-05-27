@@ -1,0 +1,31 @@
+# Main Application Configuration (Default Profile)
+
+# Server Configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+# Spring Data Source (Example for a PostgreSQL database)
+spring:
+  application:
+    name: MyTodoListApp
+  datasource:
+    url: jdbc:mysql://localhost:3306/world
+    username: root
+    password: Bibavix6$
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+# Custom Application Properties
+app:
+  welcome-message: Welcome to the development application!
+  feature-flags:
+    enable-auth: true
+    enable-audit: false
