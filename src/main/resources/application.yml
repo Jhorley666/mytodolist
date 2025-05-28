@@ -2,16 +2,19 @@
 
 # Server Configuration
 server:
-  port: 8080
+  port: 8587
   servlet:
     context-path: /api
+logging:
+  level:
+    org.springframework.web: DEBUG
 
 # Spring Data Source (Example for a PostgreSQL database)
 spring:
   application:
     name: MyTodoListApp
   datasource:
-    url: jdbc:mysql://localhost:3306/world
+    url: jdbc:mysql://localhost:3306/todo_list
     username: root
     password: Bibavix6$
     driver-class-name: com.mysql.cj.jdbc.Driver
