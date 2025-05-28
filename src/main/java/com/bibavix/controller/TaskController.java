@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/tasks")
 @AllArgsConstructor
@@ -31,13 +33,10 @@ public class TaskController {
         return "";
     }
 
-    @GetMapping("/{id}")
-    public TaskDTO getTask(@PathVariable("id") String id) {
-        return null; // Replace null with logic to fetch a task by ID
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<TaskDTO>> getTasksByUserId(@PathVariable Integer userId) {
+        List<TaskDTO> tasks = taskService.getAllTasksByUserId(userId);
+        return ResponseEntity.ok(tasks);
     }
 
-    @GetMapping("/all")
-    public String getAllTasks() {
-        return "All tasks";
-    }
 }

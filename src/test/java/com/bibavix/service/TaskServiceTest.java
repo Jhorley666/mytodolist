@@ -10,6 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -25,6 +27,8 @@ class TaskServiceTest {
     TaskDTO taskDTO;
     @Mock
     Task task;
+    @Mock
+    List<Task> tasks;
 
     @Test
     void shouldReturnLongWhenTaskIsCreated() {
@@ -32,6 +36,12 @@ class TaskServiceTest {
         when(taskRepository.save(task)).thenReturn(task);
         Integer taskId = taskService.createTask(taskDTO, 1);
         assertNotNull(taskId);
+    }
+
+    @Test
+    void shouldReturnListOfTasksWhenUserIdIsProvided() {
+        List<TaskDTO> taskDTOs = taskService.getAllTasksByUserId(1);
+        assertNotNull(taskDTOs);
     }
 
 }

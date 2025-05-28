@@ -15,4 +15,7 @@ public interface TaskMapper {
     @Mapping(target = "statusId", source = "statusId") // Long a Short
     @Mapping(target = "categoryId", source = "categoryId") // Long a Integer
     Task toEntity(TaskDTO taskDTO);
+
+    @Mapping(target = "dueDate", source = "dueDate", dateFormat = "yyyy-MM-dd")
+    TaskDTO toDTO(Task task);
 }

@@ -8,7 +8,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -23,6 +25,14 @@ public class TaskService {
         task.setStatusId(Objects.nonNull(taskDTO.getStatusId())  ? taskDTO.getStatusId().shortValue() : (short) 1);
         Task savedTask = taskRepository.save(task);
         return savedTask.getTaskId();
+    }
+
+    @Transactional(readOnly = true)
+    public List<TaskDTO> getAllTasksByUserId(Integer userId) {
+        List<Task> tasks = taskRepository.findAllByUserId(userId);
+        return tasks.stream()
+                .map(taskMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
 }
