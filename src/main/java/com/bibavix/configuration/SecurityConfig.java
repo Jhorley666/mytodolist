@@ -20,6 +20,7 @@ public class SecurityConfig {
         return http
             .csrf(AbstractHttpConfigurer::disable)  // Disable CSRF for REST APIs
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/api/tasks/**").authenticated()
                 .anyRequest().permitAll()
             )
