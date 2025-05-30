@@ -1,0 +1,195 @@
+openapi: 3.0.3
+info:
+  title: To-Do List API
+  version: 1.0
+  description: API for managing tasks in a to-do list application
+
+servers:
+  - url: http://localhost:8587/api
+    description: Local development server
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+  schemas:
+    TaskDTO:
+      type: object
+      description: Data Transfer Object for Task operations
+      properties:
+        title:
+          type: string
+          description: Title of the task
+          example: Complete report
+          maxLength: 100
+        description:
+          type: string
+          description: Description of the task
+          example: Monthly sales report
+          maxLength: 1000
+        priority:
+          type: string
+          description: Priority of the task
+          example: Alta
+          enum:
+            - Baja
+            - Media
+            - Alta
+        categoryId:
+          type: integer
+          description: ID of the category
+          example: 1
+        statusId:
+          type: integer
+          description: ID of the task status
+          example: 1
+        dueDate:
+          type: string
+          description: Due date in yyyy-MM-dd format
+          example: 2025-06-01
+      required:
+        - title
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
+          example: Task not found with ID: 1
+security:
+  - basicAuth: []
+paths:
+  /tasks:
+    post:
+      summary: Create a new task
+      description: Creates a new task for the authenticated user
+      tags:
+        - Tasks
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskDTO'
+      responses:
+        '201':
+          description: Task created successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Task created successfully with ID: 1
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /tasks/user:
+    get:
+      summary: Get tasks for the authenticated user
+      description: Retrieves all tasks associated with the authenticated user
+      tags:
+        - Tasks
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskDTO'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /tasks/task/{taskId}:
+    put:
+      summary: Update an existing task
+      description: Updates the task with the specified ID for the authenticated user
+      tags:
+        - Tasks
+      security:
+        - basicAuth: []
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          description: ID of the task to update
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskDTO'
+      responses:
+        '200':
+          description: Task updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDTO'
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Delete a task
+      description: Deletes the task with the specified ID for the authenticated user
+      tags:
+        - Tasks
+      security:
+        - basicAuth: []
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          description: ID of the task to delete
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '204':
+          description: Task deleted successfully
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'

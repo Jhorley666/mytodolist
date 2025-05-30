@@ -8,6 +8,8 @@ server:
 logging:
   level:
     org.springframework.web: DEBUG
+    org.springframework: DEBUG
+    org.springdoc: DEBUG
 
 # Spring Data Source (Example for a PostgreSQL database)
 spring:
@@ -36,6 +38,7 @@ app:
 springdoc:
   api-docs:
     path: /v3/api-docs
+    enabled: true  # Enable automatic generation for annotation
   swagger-ui:
     path: /swagger-ui.html
     operationsSorter: method

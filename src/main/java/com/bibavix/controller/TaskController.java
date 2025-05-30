@@ -13,11 +13,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/tasks")
@@ -48,10 +50,14 @@ public class TaskController {
             description = "Updates the task with the specified ID for the authenticated user")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Task updated successfully",
-                    content = @Content(mediaType = "application/json",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = TaskDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input data",
-                    content = @Content(mediaType = "text/plain", schema = @Schema(type = "string"))),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid input data",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = Map.class, ref = "#/components/schemas/ErrorResponse"))),
             @ApiResponse(responseCode = "403", description = "Unauthorized",
                     content = @Content(mediaType = "text/plain", schema = @Schema(type = "string"))),
             @ApiResponse(responseCode = "404", description = "Task not found",
@@ -85,7 +91,7 @@ public class TaskController {
             description = "Retrieves all tasks associated with the authenticated user")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "List of tasks",
-                    content = @Content(mediaType = "application/json",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = TaskDTO.class))),
             @ApiResponse(responseCode = "403", description = "Unauthorized",
                     content = @Content(mediaType = "text/plain", schema = @Schema(type = "string")))
@@ -95,16 +101,6 @@ public class TaskController {
         Integer userId  = getAuthenticatedUserId();
         List<TaskDTO> tasks = taskService.getAllTasksByUserId(userId);
         return ResponseEntity.ok(tasks);
-    }
-
-    @ExceptionHandler(TaskNotFoundException.class)
-    public ResponseEntity<String> handleException(TaskNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-    }
-
-    @ExceptionHandler(SecurityException.class)
-    public ResponseEntity<String> handleSecurityException(SecurityException ex) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
 
     private Integer getAuthenticatedUserId() {
