@@ -1,0 +1,37 @@
+version: '3.8'
+services:
+  app:
+    image: mytodolist
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8587:8587"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/todo_list?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=Bibavix6$
+      - USER_TEST=juanperez
+      - PASSWORD_TEST=hashed_password
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL8Dialect
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=Bibavix6$
+      - MYSQL_DATABASE=todo_list
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
