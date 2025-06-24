@@ -1,0 +1,57 @@
+# Main Application Configuration (Default Profile)
+
+# Server Configuration
+server:
+  port: 8587
+  servlet:
+    context-path: /api
+
+# Spring Data Source (Example for a PostgreSQL database)
+spring:
+  application:
+    name: MyTodoListApp
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+# Custom Application Properties
+app:
+  welcome-message: Welcome to the development application!
+  feature-flags:
+    enable-auth: true
+    enable-audit: false
+  auth:
+    tokenSecret: ${APP_AUTH_TOKEN_SECRET}
+    tokenExpirationMs: ${APP_AUTH_TOKEN_EXPIRATION_MS:600000}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true  # Enable automatic generation for annotation
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+    enabled: true
+  show-actuator: false
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework: DEBUG
+    org.springdoc: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics

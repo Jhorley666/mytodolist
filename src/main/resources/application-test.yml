@@ -1,0 +1,36 @@
+# Test Profile Configuration (Overrides/Adds to application.yml when 'test' profile is active)
+
+# H2 Database Configuration for Tests
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE # In-memory H2 database
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop # Creates schema on startup, drops on shutdown for clean tests
+    show-sql: true # Show SQL queries in test logs for debugging
+    properties:
+      hibernate:
+        format_sql: true
+  # Other Spring Boot test-specific properties
+  application:
+    name: MyAwesomeApp-Test
+
+# Custom Application Properties for Test
+app:
+  welcome-message: Welcome to the test environment!
+  feature-flags:
+    enable-auth: false # Maybe disable auth for simpler testing
+    enable-audit: false
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+    enabled: false
+  show-actuator: false

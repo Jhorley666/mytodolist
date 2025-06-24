@@ -1,0 +1,188 @@
+openapi: 3.0.1
+info:
+  title: To-Do List API
+  description: API for managing tasks is a to-do list application
+  version: "1.0"
+servers:
+- url: http://localhost:8587/api
+  description: Generated server url
+security:
+- basicAuth: []
+tags:
+- name: Task API
+  description: Operations related to task management
+paths:
+  /tasks/{taskId}:
+    put:
+      tags:
+      - Task API
+      summary: Update an existing task
+      description: Updates the task with the specified ID for the authenticated user
+      operationId: updateTask
+      parameters:
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskDTO'
+        required: true
+      responses:
+        "400":
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                type: string
+        "404":
+          description: Task not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        "403":
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        "200":
+          description: Task updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDTO'
+      security:
+      - basicAuth: []
+    delete:
+      tags:
+      - Task API
+      summary: Delete a task
+      description: Deletes the task with the specified ID for the authenticated user
+      operationId: deleteTask
+      parameters:
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "204":
+          description: Task deleted successfully
+        "404":
+          description: Task not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        "403":
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+      - basicAuth: []
+  /tasks:
+    post:
+      tags:
+      - Task API
+      summary: Create a new task
+      description: Creates a new task for the authenticated user
+      operationId: createTask
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskDTO'
+        required: true
+      responses:
+        "201":
+          description: Task created successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+        "403":
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        "400":
+          description: Invalid input data
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+      - basicAuth: []
+  /tasks/user:
+    get:
+      tags:
+      - Task API
+      summary: Get tasks for the authenticated user
+      description: Retrieves all tasks associated with the authenticated user
+      operationId: getAllTasksByUserId
+      responses:
+        "403":
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        "200":
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDTO'
+      security:
+      - basicAuth: []
+components:
+  schemas:
+    TaskDTO:
+      required:
+      - title
+      type: object
+      properties:
+        title:
+          maxLength: 100
+          minLength: 0
+          type: string
+          description: Title of the task
+          example: Complete report
+        description:
+          maxLength: 1000
+          minLength: 0
+          type: string
+          description: Description of the task
+          example: Monthly sales report
+        priority:
+          pattern: Low|Medium|High
+          type: string
+          description: Priority of the task
+          example: Alta
+          enum:
+          - Low
+          - Medium
+          - High
+        categoryId:
+          type: integer
+          format: int32
+        statusId:
+          type: integer
+          format: int32
+        dueDate:
+          type: string
+      description: Data Transfer Object for Task operations
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
