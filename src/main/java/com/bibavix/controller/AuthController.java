@@ -1,7 +1,7 @@
 package com.bibavix.controller;
 
 import com.bibavix.configuration.JwtUtils;
-import com.bibavix.configuration.UserDetailsServiceImpl;
+import com.bibavix.service.impl.UserDetailsServiceImpl;
 import com.bibavix.dto.JwtResponse;
 import com.bibavix.dto.LoginRequest;
 import com.bibavix.dto.RegisterRequest;

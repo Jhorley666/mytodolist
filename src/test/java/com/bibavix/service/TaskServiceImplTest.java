@@ -6,6 +6,7 @@ import com.bibavix.model.Task;
 import com.bibavix.repository.CategoryRepository;
 import com.bibavix.repository.StatusRepository;
 import com.bibavix.repository.TaskRepository;
+import com.bibavix.service.impl.TaskServiceImpl;
 import com.bibavix.util.mapper.TaskMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,9 +20,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class TaskServiceTest {
+class TaskServiceImplTest {
     @InjectMocks
-    TaskService taskService;
+    TaskServiceImpl taskService;
     @Mock
     TaskRepository taskRepository;
     @Mock
