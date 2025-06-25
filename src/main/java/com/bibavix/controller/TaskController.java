@@ -27,6 +27,7 @@ import java.util.List;
 public class TaskController {
 
     public static final String USER_NOT_FOUND = "User not found";
+    public static final String TASK_NOT_FOUND = "Task not found";
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
 
@@ -64,9 +65,9 @@ public class TaskController {
             @Parameter(description = "Task ID", required = true) @PathVariable Integer id,
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
         User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new RuntimeException(TASK_NOT_FOUND));
         if (!task.getUserId().equals(user.getUserId())) {
             return ResponseEntity.status(403).build();
         }
@@ -89,7 +90,7 @@ public class TaskController {
             @RequestBody Task task,
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
         User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
         task.setUserId(user.getUserId());
         Task savedTask = taskRepository.save(task);
         return ResponseEntity.ok(savedTask);
@@ -113,9 +114,9 @@ public class TaskController {
             @RequestBody Task updatedTask,
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
         User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new RuntimeException(TASK_NOT_FOUND));
         if (!task.getUserId().equals(user.getUserId())) {
             return ResponseEntity.status(403).build();
         }
@@ -141,9 +142,9 @@ public class TaskController {
             @Parameter(description = "Task ID", required = true) @PathVariable Integer id,
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
         User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new RuntimeException(TASK_NOT_FOUND));
         if (!task.getUserId().equals(user.getUserId())) {
             return ResponseEntity.status(403).build();
         }
