@@ -3,20 +3,21 @@
 # H2 Database Configuration for Tests
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE # In-memory H2 database
+    url: jdbc:h2:mem:todo-list;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL;INIT=CREATE SCHEMA IF NOT EXISTS todo_list # In-memory H2 database
     driver-class-name: org.h2.Driver
     username: sa
     password:
   jpa:
     hibernate:
-      ddl-auto: create-drop # Creates schema on startup, drops on shutdown for clean tests
+      ddl-auto: update # Creates schema on startup, drops on shutdown for clean tests
     show-sql: true # Show SQL queries in test logs for debugging
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
   # Other Spring Boot test-specific properties
   application:
-    name: MyAwesomeApp-Test
+    name: MyTodoListApp-Test
 
 # Custom Application Properties for Test
 app:
