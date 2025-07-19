@@ -1,13 +1,11 @@
 package com.bibavix.controller;
 
 import com.bibavix.configuration.JwtUtils;
-import com.bibavix.dto.JwtResponse;
-import com.bibavix.dto.LoginRequest;
-import com.bibavix.dto.RegisterRequest;
-import com.bibavix.dto.UserDetailsImpl;
+import com.bibavix.dto.*;
 import com.bibavix.model.User;
 import com.bibavix.repository.RoleRepository;
 import com.bibavix.repository.UserRepository;
+import com.bibavix.service.AuthService;
 import com.bibavix.service.impl.UserDetailsServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -55,7 +53,10 @@ class AuthControllerTest {
     RegisterRequest registerRequest;
     @Mock
     Optional<User> optionalUser;
-
+    @Mock
+    AuthService authService;
+    @Mock
+    ResponseEntity<JwtResponse> jwtResponseResponseEntity;
     @Test
     void shouldReturnJwtResponseWhenAuthenticateUser() {
 
@@ -64,8 +65,8 @@ class AuthControllerTest {
                         when(authenticationManager.authenticate(mock)).thenReturn(usernamePasswordAuthenticationToken);
                         when(authenticationManager.authenticate(mock).getPrincipal()).thenReturn(userDetails);
                     })) {
-            when(loginRequest.getUsername()).thenReturn("usertest");
-            when(loginRequest.getPassword()).thenReturn("userpass");
+            JwtResponse jwtResponse = new JwtResponse();
+            when(authService.authenticateUser(loginRequest)).thenReturn(ResponseEntity.ok(jwtResponse));
             ResponseEntity<JwtResponse> response = authController.authenticateUser(loginRequest);
             Assertions.assertNotNull(response);
             Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -79,9 +80,9 @@ class AuthControllerTest {
                     Mockito.mockConstruction(User.class, (mock, context) -> {
 
                     })) {
-            when(registerRequest.getUsername()).thenReturn("usertest");
-            when(optionalUser.isPresent()).thenReturn(Boolean.TRUE);
-            when(userRepository.findByUsername("usertest")).thenReturn(optionalUser);
+            ResponseCode responseCode = new ResponseCode();
+            responseCode.setHttpStatus(HttpStatus.BAD_REQUEST);
+            when(authService.registerUser(registerRequest)).thenReturn(ResponseEntity.badRequest().body(responseCode));
             ResponseEntity<?> response = authController.registerUser(registerRequest);
             Assertions.assertNotNull(response);
             Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -94,6 +95,9 @@ class AuthControllerTest {
                 Mockito.mockConstruction(User.class, (mock, context) -> {
 
                 })) {
+            ResponseCode responseCode = new ResponseCode();
+            responseCode.setHttpStatus(HttpStatus.OK);
+            when(authService.registerUser(registerRequest)).thenReturn(ResponseEntity.ok(responseCode));
             ResponseEntity<?> response = authController.registerUser(registerRequest);
             Assertions.assertNotNull(response);
             Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());

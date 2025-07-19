@@ -1,6 +1,5 @@
-package com.bibavix.controller;
+package com.bibavix.exception;
 
-import com.bibavix.exception.TaskNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

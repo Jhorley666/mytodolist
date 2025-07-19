@@ -1,5 +1,6 @@
 package com.bibavix.controller;
 
+import com.bibavix.exception.GlobalExceptionHandler;
 import com.bibavix.exception.TaskNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
