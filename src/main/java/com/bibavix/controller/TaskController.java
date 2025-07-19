@@ -1,5 +1,6 @@
 package com.bibavix.controller;
 
+import com.bibavix.dto.ResponseCode;
 import com.bibavix.model.Task;
 import com.bibavix.model.User;
 import com.bibavix.repository.TaskRepository;
@@ -138,7 +139,7 @@ public class TaskController {
     })
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> deleteTask(
+    public ResponseEntity<ResponseCode> deleteTask(
             @Parameter(description = "Task ID", required = true) @PathVariable Integer id,
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
         User user = userRepository.findByUsername(userDetails.getUsername())
