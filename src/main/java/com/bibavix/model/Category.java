@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "categories", catalog = "todo_list", schema = "todo_list")
 @Getter
@@ -19,4 +21,7 @@ public class Category {
 
     @Column(name = "name", nullable = false, length = 50)
     private String name;
+
+    @Column(name = "created_at")
+    private LocalDate createdAt;
 }

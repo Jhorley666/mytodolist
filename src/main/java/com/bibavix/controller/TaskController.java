@@ -1,10 +1,9 @@
 package com.bibavix.controller;
 
 import com.bibavix.dto.ResponseCode;
+import com.bibavix.dto.TaskDTO;
 import com.bibavix.model.Task;
-import com.bibavix.model.User;
-import com.bibavix.repository.TaskRepository;
-import com.bibavix.repository.UserRepository;
+import com.bibavix.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,8 +28,7 @@ public class TaskController {
 
     public static final String USER_NOT_FOUND = "User not found";
     public static final String TASK_NOT_FOUND = "Task not found";
-    private final TaskRepository taskRepository;
-    private final UserRepository userRepository;
+    private final TaskService taskService;
 
     @Operation(
         summary = "Get all tasks for the authenticated user",
@@ -42,11 +40,9 @@ public class TaskController {
     })
     @GetMapping
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<List<Task>> getAllTasks(
+    public ResponseEntity<List<TaskDTO>> getAllTasks(
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
-        User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
-        List<Task> tasks = taskRepository.findAllByUserId(user.getUserId());
+        List<TaskDTO> tasks = taskService.getAllTasksByUser(userDetails.getUsername());
         return ResponseEntity.ok(tasks);
     }
 
@@ -65,13 +61,7 @@ public class TaskController {
     public ResponseEntity<Task> getTaskById(
             @Parameter(description = "Task ID", required = true) @PathVariable Integer id,
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
-        User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
-        Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(TASK_NOT_FOUND));
-        if (!task.getUserId().equals(user.getUserId())) {
-            return ResponseEntity.status(403).build();
-        }
+        Task task = taskService.findTaskById(id);
         return ResponseEntity.ok(task);
     }
 
@@ -88,13 +78,10 @@ public class TaskController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Task> createTask(
             @Parameter(description = "Task to create", required = true, schema = @Schema(implementation = Task.class))
-            @RequestBody Task task,
+            @RequestBody TaskDTO task,
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
-        User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
-        task.setUserId(user.getUserId());
-        Task savedTask = taskRepository.save(task);
-        return ResponseEntity.ok(savedTask);
+        Task taskToCreate = taskService.createTask(task, userDetails.getUsername());
+        return ResponseEntity.ok(taskToCreate);
     }
 
     @Operation(
@@ -109,23 +96,13 @@ public class TaskController {
     })
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Task> updateTask(
+    public ResponseEntity<TaskDTO> updateTask(
             @Parameter(description = "Task ID", required = true) @PathVariable Integer id,
             @Parameter(description = "Updated task", required = true, schema = @Schema(implementation = Task.class))
-            @RequestBody Task updatedTask,
+            @RequestBody TaskDTO updatedTask,
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
-        User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
-        Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(TASK_NOT_FOUND));
-        if (!task.getUserId().equals(user.getUserId())) {
-            return ResponseEntity.status(403).build();
-        }
-        task.setTitle(updatedTask.getTitle());
-        task.setDescription(updatedTask.getDescription());
-        task.setStatusId(updatedTask.getStatusId());
-        Task savedTask = taskRepository.save(task);
-        return ResponseEntity.ok(savedTask);
+        TaskDTO taskToUpdate = taskService.updateTask(id, updatedTask, userDetails.getUsername());
+        return ResponseEntity.ok(taskToUpdate);
     }
 
     @Operation(
@@ -142,14 +119,7 @@ public class TaskController {
     public ResponseEntity<ResponseCode> deleteTask(
             @Parameter(description = "Task ID", required = true) @PathVariable Integer id,
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
-        User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
-        Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(TASK_NOT_FOUND));
-        if (!task.getUserId().equals(user.getUserId())) {
-            return ResponseEntity.status(403).build();
-        }
-        taskRepository.delete(task);
+        taskService.deleteTask(id, userDetails.getUsername());
         return ResponseEntity.ok().build();
     }
 }

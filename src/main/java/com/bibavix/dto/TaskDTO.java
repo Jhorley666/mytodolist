@@ -2,13 +2,17 @@ package com.bibavix.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 
 @Data
 @Schema(description = "Data Transfer Object for Task operations")
+@AllArgsConstructor
+@NoArgsConstructor
 public class TaskDTO {
     @NotBlank(message = "Title is required")
     @Size(max = 100, message = "Title must not exceed 100 characters")
@@ -22,6 +26,10 @@ public class TaskDTO {
     @Pattern(regexp = "Low|Medium|High", message = "Priority must be 'Low', 'Medium', or 'High'")
     @Schema(description = "Priority of the task", example = "Alta", allowableValues = {"Low", "Medium", "High"})
     private String priority = "Medium";
+
+    private Integer taskId;
+
+    private Integer userId;
 
     private Integer categoryId;
 
