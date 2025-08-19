@@ -10,8 +10,8 @@ import org.mapstruct.MappingTarget;
 public interface TaskMapper {
     @Mapping(target = "taskId", ignore = true)
     @Mapping(target = "userId", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdAt", ignore = true, dateFormat = "yyyy-MM-dd")
+    @Mapping(target = "updatedAt", ignore = true, dateFormat = "yyyy-MM-dd")
     @Mapping(target = "dueDate", source = "dueDate", dateFormat = "yyyy-MM-dd")
     @Mapping(target = "statusId", source = "statusId") // Long a Short
     @Mapping(target = "categoryId", source = "categoryId") // Long a Integer
@@ -22,8 +22,8 @@ public interface TaskMapper {
 
     @Mapping(target = "taskId", ignore = true)
     @Mapping(target = "userId", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdAt", ignore = true, dateFormat = "yyyy-MM-dd")
+    @Mapping(target = "updatedAt", ignore = true, dateFormat = "yyyy-MM-dd")
     @Mapping(target = "dueDate", source = "dueDate", dateFormat = "yyyy-MM-dd")
     @Mapping(target = "statusId", source = "statusId")
     @Mapping(target = "categoryId", source = "categoryId")

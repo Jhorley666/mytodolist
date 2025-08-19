@@ -11,7 +11,7 @@ class TaskStatusTest {
     @Test
     void testTaskStatusFieldsAndGettersSetters() {
         TaskStatus status = new TaskStatus();
-        status.setStatusId((short) 1);
+        status.setStatusId(1);
         status.setName("In Progress");
 
         assertEquals((short) 1, Optional.ofNullable(status.getStatusId()).get());

@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDateTime;
+
 
 @Data
 @Schema(description = "Data Transfer Object for Task operations")
@@ -36,4 +38,8 @@ public class TaskDTO {
     private Integer statusId;
 
     private String dueDate; // Usamos String para recibir la fecha en formato ISO (ej. "2025-06-01")
+
+    private String createdAt;
+
+    private String updatedAt;
 }

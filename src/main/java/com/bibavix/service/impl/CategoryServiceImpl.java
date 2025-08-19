@@ -39,7 +39,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO getCategoryById(Integer categoryId) {
         Category category = categoryRepository
-                .findById(categoryId).orElseThrow(() -> new CategoryNotFoundException(categoryId));
+                .findById(categoryId).orElseThrow(() ->
+                        new CategoryNotFoundException(categoryId));
         return categoryMapper.toDTO(category);
     }
 

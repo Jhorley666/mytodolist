@@ -1,6 +1,7 @@
 package com.bibavix.controller;
 
 import com.bibavix.dto.CategoryDTO;
+import com.bibavix.dto.ResponseCode;
 import com.bibavix.model.User;
 import com.bibavix.repository.UserRepository;
 import com.bibavix.service.CategoryService;
@@ -46,5 +47,18 @@ public class CategoryController {
                 .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
         List<CategoryDTO> categoryDTOS = categoryService.getAllCategoriesByUserId(user.getUserId());
         return ResponseEntity.ok(categoryDTOS);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<ResponseCode> deleteCategory(@Parameter(description = "Category ID", required = true) @PathVariable Integer id,
+                                                       @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
+        User user = userRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
+        CategoryDTO categoryDTO = new CategoryDTO();
+        categoryDTO.setCategoryId(id);
+        categoryDTO.setUserId(user.getUserId());
+        categoryService.deleteCategory(categoryDTO);
+        return ResponseEntity.ok().build();
     }
 }

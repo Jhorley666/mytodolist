@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,12 +24,15 @@ import java.util.List;
 @Tag(name = "Tasks", description = "Task management APIs")
 @RestController
 @RequestMapping("/v1/tasks")
-@RequiredArgsConstructor
 public class TaskController {
 
     public static final String USER_NOT_FOUND = "User not found";
     public static final String TASK_NOT_FOUND = "Task not found";
     private final TaskService taskService;
+
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
+    }
 
     @Operation(
         summary = "Get all tasks for the authenticated user",
