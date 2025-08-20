@@ -3,6 +3,7 @@ package com.bibavix.service.impl;
 import com.bibavix.dto.TaskDTO;
 import com.bibavix.exception.TaskNotFoundException;
 import com.bibavix.model.Task;
+import com.bibavix.model.User;
 import com.bibavix.repository.CategoryRepository;
 import com.bibavix.repository.StatusRepository;
 import com.bibavix.repository.TaskRepository;
@@ -22,27 +23,26 @@ public class TaskServiceImpl implements TaskService {
     private final CategoryRepository categoryRepository;
     private final StatusRepository statusRepository;
     private final TaskMapper taskMapper;
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Transactional
-    public Integer createTask(TaskDTO taskDTO, Integer userId) {
+    public Task createTask(TaskDTO taskDTO, String username) {
+        User user = userDetailsService.findUserByUsername(username);
         validateCategoryAndStatus(taskDTO);
         Task task = taskMapper.toEntity(taskDTO);
-        task.setUserId(userId);
+        task.setUserId(user.getUserId());
         task.setStatusId(Objects.nonNull(taskDTO.getStatusId())  ? taskDTO.getStatusId().shortValue() : (short) 1);
-        Task savedTask = taskRepository.save(task);
-        return savedTask.getTaskId();
+        return taskRepository.save(task);
     }
 
 
     @Transactional
-    public TaskDTO updateTask(Integer taskId, TaskDTO taskDTO, Integer userId) {
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new TaskNotFoundException(taskId));
-
-        if (!task.getUserId().equals(userId)) {
+    public TaskDTO updateTask(Integer taskId, TaskDTO taskDTO, String username) {
+        User user = userDetailsService.findUserByUsername(username);
+        Task task = findTaskById(taskId);
+        if (!task.getUserId().equals(user.getUserId())) {
             throw new SecurityException("User not authorized to update task");
         }
-
         validateCategoryAndStatus(taskDTO);
         taskMapper.updateTaskFromDTO(taskDTO, task);
         Task updatedTask = taskRepository.save(task);
@@ -51,19 +51,27 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Transactional
-    public void deleteTask(Integer taskId) {
-        if (!taskRepository.existsById(taskId)) {
-            throw new TaskNotFoundException(taskId);
+    public void deleteTask(Integer taskId, String username) {
+        User user = userDetailsService.findUserByUsername(username);
+        Task task = findTaskById(taskId);
+        if (!task.getUserId().equals(user.getUserId())) {
+            throw new SecurityException("User not authorized to update task");
         }
-        taskRepository.deleteById(taskId);
+        taskRepository.deleteById(task.getTaskId());
     }
 
     @Transactional(readOnly = true)
-    public List<TaskDTO> getAllTasksByUserId(Integer userId) {
-        List<Task> tasks = taskRepository.findAllByUserId(userId);
+    public List<TaskDTO> getAllTasksByUser(String username) {
+        User user = userDetailsService.findUserByUsername(username);
+        List<Task> tasks = taskRepository.findAllByUserId(user.getUserId());
         return tasks.stream()
                 .map(taskMapper::toDTO)
                 .toList();
+    }
+
+    public Task findTaskById(Integer taskId) {
+        return taskRepository.findById(taskId)
+                .orElseThrow(() -> new TaskNotFoundException( taskId));
     }
 
     private void validateCategoryAndStatus(TaskDTO taskDTO) {

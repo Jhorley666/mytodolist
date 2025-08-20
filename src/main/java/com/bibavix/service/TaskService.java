@@ -1,12 +1,14 @@
 package com.bibavix.service;
 
 import com.bibavix.dto.TaskDTO;
+import com.bibavix.model.Task;
 
 import java.util.List;
 
 public interface TaskService {
-    Integer createTask(TaskDTO taskDTO, Integer userId);
-    TaskDTO updateTask(Integer taskId, TaskDTO taskDTO, Integer userId);
-    void deleteTask(Integer taskId);
-    List<TaskDTO> getAllTasksByUserId(Integer userId);
+    Task createTask(TaskDTO taskDTO, String username);
+    Task findTaskById(Integer taskId);
+    TaskDTO updateTask(Integer taskId, TaskDTO taskDTO, String username);
+    void deleteTask(Integer taskId, String username);
+    List<TaskDTO> getAllTasksByUser(String username);
 }
