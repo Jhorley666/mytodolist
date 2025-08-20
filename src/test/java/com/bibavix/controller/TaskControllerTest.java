@@ -65,12 +65,12 @@ class TaskControllerTest {
                         "test to test",
                         "Low",
                         1, 1,
-                        1, 1, "2024-04-02"),
+                        1, 1, "2024-04-02", "2024-04-02", "2024-04-02"),
                 new TaskDTO("test",
                         "test to test",
                         "High",
                         2, 2,
-                        2, 2, "2024-04-02")
+                        2, 2, "2024-04-02", "2024-04-02", "2024-04-02")
         );
         when(taskService.getAllTasksByUser(userDetails.getUsername())).thenReturn(tasks);
 
