@@ -25,6 +25,9 @@ app:
   feature-flags:
     enable-auth: false # Maybe disable auth for simpler testing
     enable-audit: false
+  auth:
+    tokenSecret: yQw8Zk1vQ2JzT3h1d2p5d3J0d2Z6c2FqZ3J3d3Z6c2FqZ3J3d3Z6c2FqZ3J3d3Y=
+    tokenExpirationMs: 600000
 
 springdoc:
   api-docs:
