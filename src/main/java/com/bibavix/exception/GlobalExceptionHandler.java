@@ -56,8 +56,8 @@ public class GlobalExceptionHandler {
      * @return ResponseEntity<Map<String, Object>>
      * @description Handle TaskNotFoundException
      */
-    @ExceptionHandler(TaskNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleTaskNotFoundException(TaskNotFoundException ex) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleTaskNotFoundException(ResourceNotFoundException ex) {
         Map<String, Object> response = new HashMap<>();
         response.put(STATUS, HttpStatus.NOT_FOUND.value());
         response.put(ERROR, "Not Found");

@@ -11,7 +11,7 @@ public interface CategoryMapper {
     @Mapping(target = "categoryId", ignore = true)
     @Mapping(target = "userId", ignore = true)
     @Mapping(target = "name", source = "name")
-    @Mapping(target = "createdAt", source = "createdAt", dateFormat = "yyyy-MM-dd")
+        @Mapping(target = "createdAt", source = "createdAt", dateFormat = "yyyy-MM-dd")
     Category toEntity(CategoryDTO categoryDTO);
 
     @Mapping(target = "createdAt", source = "createdAt", dateFormat = "yyyy-MM-dd")
@@ -19,7 +19,7 @@ public interface CategoryMapper {
 
     @Mapping(target = "categoryId", ignore = true)
     @Mapping(target = "userId", ignore = true)
-    @Mapping(target = "name", ignore = true)
+    @Mapping(target = "name", source = "name")
     @Mapping(target = "createdAt", ignore = true)
     void updateCategoryFromDTO(CategoryDTO categoryDTO, @MappingTarget Category category);
 }

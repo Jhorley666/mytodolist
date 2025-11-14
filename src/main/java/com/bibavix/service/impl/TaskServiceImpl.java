@@ -1,7 +1,7 @@
 package com.bibavix.service.impl;
 
 import com.bibavix.dto.TaskDTO;
-import com.bibavix.exception.TaskNotFoundException;
+import com.bibavix.exception.ResourceNotFoundException;
 import com.bibavix.model.Task;
 import com.bibavix.model.User;
 import com.bibavix.repository.CategoryRepository;
@@ -71,7 +71,7 @@ public class TaskServiceImpl implements TaskService {
 
     public Task findTaskById(Integer taskId) {
         return taskRepository.findById(taskId)
-                .orElseThrow(() -> new TaskNotFoundException( taskId));
+                .orElseThrow(() -> new ResourceNotFoundException("Task with id " + taskId + " not found."));
     }
 
     private void validateCategoryAndStatus(TaskDTO taskDTO) {

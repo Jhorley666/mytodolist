@@ -1,7 +1,7 @@
 package com.bibavix.controller;
 
 import com.bibavix.exception.GlobalExceptionHandler;
-import com.bibavix.exception.TaskNotFoundException;
+import com.bibavix.exception.ResourceNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
@@ -56,11 +56,11 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void testHandleTaskNotFoundException() {
-        TaskNotFoundException ex = new TaskNotFoundException(123);
+        ResourceNotFoundException ex = new ResourceNotFoundException("Task with id 123 not found.");
         ResponseEntity<Map<String, Object>> response = handler.handleTaskNotFoundException(ex);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals("Not Found", response.getBody().get("error"));
-        assertEquals("Task not found for ID: 123", response.getBody().get("message"));
+        assertEquals("Task with id 123 not found.", response.getBody().get("message"));
     }
 
     @Test

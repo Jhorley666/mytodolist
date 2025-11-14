@@ -1,7 +1,7 @@
 package com.bibavix.service.impl;
 
 import com.bibavix.dto.TaskStatusDTO;
-import com.bibavix.exception.TaskStatusNotFoundException;
+import com.bibavix.exception.ResourceNotFoundException;
 import com.bibavix.model.TaskStatus;
 import com.bibavix.repository.TaskStatusRepository;
 import com.bibavix.service.TaskStatusService;
@@ -37,7 +37,7 @@ public class TaskStatusServiceImpl implements TaskStatusService {
     public TaskStatusDTO getTaskStatusById(Integer taskStatusId) {
         TaskStatus taskStatus = taskStatusRepository.findById(taskStatusId)
                 .orElseThrow(() ->
-                        new TaskStatusNotFoundException(taskStatusId));
+                        new ResourceNotFoundException("Task status with id " + taskStatusId + " not found."));
         return taskStatusMapper.toDTO(taskStatus);
     }
 

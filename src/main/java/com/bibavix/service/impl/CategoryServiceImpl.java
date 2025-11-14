@@ -1,7 +1,7 @@
 package com.bibavix.service.impl;
 
 import com.bibavix.dto.CategoryDTO;
-import com.bibavix.exception.CategoryNotFoundException;
+import com.bibavix.exception.ResourceNotFoundException;
 import com.bibavix.model.Category;
 import com.bibavix.repository.CategoryRepository;
 import com.bibavix.service.CategoryService;
@@ -40,7 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDTO getCategoryById(Integer categoryId) {
         Category category = categoryRepository
                 .findById(categoryId).orElseThrow(() ->
-                        new CategoryNotFoundException(categoryId));
+                        new ResourceNotFoundException("Category with id " + categoryId + " not found."));
         return categoryMapper.toDTO(category);
     }
 

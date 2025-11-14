@@ -2,10 +2,12 @@ package com.bibavix.controller;
 
 import com.bibavix.dto.CategoryDTO;
 import com.bibavix.dto.ResponseCode;
+import com.bibavix.model.Category;
 import com.bibavix.model.User;
 import com.bibavix.repository.UserRepository;
 import com.bibavix.service.CategoryService;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +40,26 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.getCategoryById(categoryId));
     }
 
+
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<CategoryDTO> updateCategory(
+            @Parameter(description = "Category ID", required = true) @PathVariable Integer id,
+            @Parameter(description = "Category task", required = true, schema = @Schema(implementation = Category.class))
+            @RequestBody CategoryDTO category,
+            @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
+        User user = userRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
+        CategoryDTO categoryDTO = new CategoryDTO();
+        categoryDTO.setCategoryId(id);
+        categoryDTO.setUserId(user.getUserId());
+        categoryDTO.setName(category.getName());
+        CategoryDTO taskToUpdate = categoryService.updateCategory(categoryDTO);
+        return ResponseEntity.ok(taskToUpdate);
+    }
+
+
     @GetMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<CategoryDTO>> getAllCategoriesByUserId(
@@ -60,5 +82,18 @@ public class CategoryController {
         categoryDTO.setUserId(user.getUserId());
         categoryService.deleteCategory(categoryDTO);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<CategoryDTO> getCategoryById(@Parameter(description = "Category ID", required = true) @PathVariable Integer id,
+                                                       @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
+        User user  = userRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
+        CategoryDTO categoryDTO = new CategoryDTO();
+        categoryDTO.setCategoryId(id);
+        categoryDTO.setUserId(user.getUserId());
+        CategoryDTO category = categoryService.getCategoryById(id);
+        return ResponseEntity.ok(category);
     }
 }

@@ -1,7 +1,7 @@
 package com.bibavix.service.impl;
 
 import com.bibavix.dto.TaskStatusDTO;
-import com.bibavix.exception.TaskStatusNotFoundException;
+import com.bibavix.exception.ResourceNotFoundException;
 import com.bibavix.model.TaskStatus;
 import com.bibavix.repository.TaskStatusRepository;
 import com.bibavix.util.mapper.TaskStatusMapper;
@@ -71,8 +71,8 @@ class TaskStatusServiceImplTest {
 
     @Test
     void shouldThrowTaskStatusNotFoundExceptionWhenGetTaskStatusById() {
-        when(taskStatusRepository.findById(1)).thenThrow(new TaskStatusNotFoundException(1));
-        Assertions.assertThrows(TaskStatusNotFoundException.class,() ->
+        when(taskStatusRepository.findById(1)).thenThrow(new ResourceNotFoundException("Task status with id " + 1 + " not found."));
+        Assertions.assertThrows(ResourceNotFoundException.class,() ->
                 taskStatusService.getTaskStatusById(1));
     }
 

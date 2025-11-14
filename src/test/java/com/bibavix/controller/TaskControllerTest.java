@@ -1,7 +1,7 @@
 package com.bibavix.controller;
 
 import com.bibavix.dto.TaskDTO;
-import com.bibavix.exception.TaskNotFoundException;
+import com.bibavix.exception.ResourceNotFoundException;
 import com.bibavix.model.Task;
 import com.bibavix.model.User;
 import com.bibavix.repository.TaskRepository;
@@ -186,10 +186,10 @@ class TaskControllerTest {
     @Test
     void getTaskById_ReturnsTaskNotFound() {
         when(taskService.findTaskById(100))
-                .thenThrow(new TaskNotFoundException(100));
-        Exception exception = assertThrows(TaskNotFoundException.class, () -> {
+                .thenThrow(new ResourceNotFoundException("Task with id 100 not found"));
+        Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
             taskController.getTaskById(100, userDetails);
         });
-        assertEquals("Task not found for ID: " + 100, exception.getMessage());
+        assertEquals("Task with id 100 not found", exception.getMessage());
     }
 }

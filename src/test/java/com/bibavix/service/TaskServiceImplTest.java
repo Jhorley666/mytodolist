@@ -1,7 +1,7 @@
 package com.bibavix.service;
 
 import com.bibavix.dto.TaskDTO;
-import com.bibavix.exception.TaskNotFoundException;
+import com.bibavix.exception.ResourceNotFoundException;
 import com.bibavix.model.Task;
 import com.bibavix.model.User;
 import com.bibavix.repository.CategoryRepository;
@@ -160,7 +160,7 @@ class TaskServiceImplTest {
         // Arrange
         Integer taskId = 1;
         // Act & Assert
-        assertThrows(TaskNotFoundException.class, () -> {
+        assertThrows(ResourceNotFoundException.class, () -> {
             taskService.deleteTask(taskId, "root");
         });
 
@@ -171,7 +171,7 @@ class TaskServiceImplTest {
     @Test
     void deleteTask_WhenNullId_ShouldThrowIllegalArgumentException() {
         // Act & Assert
-        assertThrows(TaskNotFoundException.class, () -> {
+        assertThrows(ResourceNotFoundException.class, () -> {
             taskService.deleteTask(null, null);
         });
 
