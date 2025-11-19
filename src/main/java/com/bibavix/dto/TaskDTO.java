@@ -25,9 +25,7 @@ public class TaskDTO {
     @Schema(description = "Description of the task", example = "Monthly sales report")
     private String description;
 
-    @Pattern(regexp = "Low|Medium|High", message = "Priority must be 'Low', 'Medium', or 'High'")
-    @Schema(description = "Priority of the task", example = "Alta", allowableValues = {"Low", "Medium", "High"})
-    private String priority = "Medium";
+    private Integer priorityId;
 
     private Integer taskId;
 

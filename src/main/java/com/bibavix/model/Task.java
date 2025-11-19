@@ -34,9 +34,8 @@ public class Task {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "priority", nullable = false)
-    private Priority priority;
+    @Column(name = "priority_id", nullable = false)
+    private Integer priorityId;
 
     @Column(name = "due_date")
     private LocalDate dueDate;
@@ -46,10 +45,6 @@ public class Task {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
-
-    public enum Priority {
-        Low, Medium, High
-    }
 
     @PrePersist
     protected void onCreate() {
