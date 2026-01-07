@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -15,7 +14,7 @@ public class TaskTimePriorityDTO {
     @NotBlank
     private Integer taskTimePriorityId;
     @NotBlank
-    private Date time;
+    private Long time;
     @NotBlank
     private Integer priorityId;
 

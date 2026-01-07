@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.Date;
 
 @Getter
 @Setter
@@ -19,7 +18,7 @@ public class TaskTimePriority {
     private Integer taskTimePriorityId;
 
     @Column(name = "time")
-    private Date time;
+    private Long time;
 
     @Column(name = "priority_id")
     private Integer priorityId;
