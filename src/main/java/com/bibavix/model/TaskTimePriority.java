@@ -18,7 +18,7 @@ public class TaskTimePriority {
     private Integer taskTimePriorityId;
 
     @Column(name = "time")
-    private Long time;
+    private Integer time;
 
     @Column(name = "priority_id")
     private Integer priorityId;

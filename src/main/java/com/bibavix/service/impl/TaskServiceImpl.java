@@ -3,13 +3,16 @@ package com.bibavix.service.impl;
 import com.bibavix.dto.TaskDTO;
 import com.bibavix.exception.ResourceNotFoundException;
 import com.bibavix.model.Task;
+import com.bibavix.model.TaskStatus;
 import com.bibavix.model.User;
 import com.bibavix.repository.CategoryRepository;
 import com.bibavix.repository.StatusRepository;
 import com.bibavix.repository.TaskRepository;
 import com.bibavix.service.TaskService;
+import com.bibavix.service.UserTimerService;
 import com.bibavix.util.mapper.TaskMapper;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,12 +21,14 @@ import java.util.Objects;
 
 @Service
 @AllArgsConstructor
+@Log4j2
 public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final CategoryRepository categoryRepository;
     private final StatusRepository statusRepository;
     private final TaskMapper taskMapper;
     private final UserDetailsServiceImpl userDetailsService;
+    private final UserTimerService userTimerService;
 
     @Transactional
     public Task createTask(TaskDTO taskDTO, String username) {
@@ -43,9 +48,25 @@ public class TaskServiceImpl implements TaskService {
         if (!task.getUserId().equals(user.getUserId())) {
             throw new SecurityException("User not authorized to update task");
         }
+
+        TaskStatus previousStatus = new TaskStatus();
+        previousStatus.setStatusId(Integer.valueOf(task.getStatusId()));
+
+        if (previousStatus.getStatusId() == 3 && taskDTO.getStatusId() != 3) {
+            throw new IllegalStateException("Completed tasks cannot be modified");
+        }
+
         validateCategoryAndStatus(taskDTO);
         taskMapper.updateTaskFromDTO(taskDTO, task);
         Task updatedTask = taskRepository.save(task);
+
+        boolean transitionedToCompleted =
+                previousStatus.getStatusId() != 3 &&
+                updatedTask.getStatusId() == 3;
+        if (transitionedToCompleted) {
+            log.info("onTaskCompleted");
+            userTimerService.onTaskCompleted(updatedTask, user);
+        }
 
         return taskMapper.toDTO(updatedTask);
     }
