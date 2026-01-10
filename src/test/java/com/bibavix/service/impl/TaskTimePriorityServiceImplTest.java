@@ -37,7 +37,7 @@ class TaskTimePriorityServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        Date testDate = new Date();
+        Integer testDate = 1000;
         
         taskTimePriority = new TaskTimePriority();
         taskTimePriority.setTaskTimePriorityId(1);
@@ -46,7 +46,7 @@ class TaskTimePriorityServiceImplTest {
 
         taskTimePriorityDTO = new TaskTimePriorityDTO();
         taskTimePriorityDTO.setTaskTimePriorityId(1);
-        taskTimePriorityDTO.setTime(testDate);
+        taskTimePriorityDTO.setTime(1000L);
         taskTimePriorityDTO.setPriorityId(10);
     }
 
@@ -69,12 +69,12 @@ class TaskTimePriorityServiceImplTest {
     void shouldReturnTaskTimePriorityListWhenGetAllTaskTimePriorities() {
         TaskTimePriority taskTimePriority2 = new TaskTimePriority();
         taskTimePriority2.setTaskTimePriorityId(2);
-        taskTimePriority2.setTime(new Date());
+        taskTimePriority2.setTime(1000);
         taskTimePriority2.setPriorityId(20);
 
         TaskTimePriorityDTO taskTimePriorityDTO2 = new TaskTimePriorityDTO();
         taskTimePriorityDTO2.setTaskTimePriorityId(2);
-        taskTimePriorityDTO2.setTime(new Date());
+        taskTimePriorityDTO2.setTime(1000L);
         taskTimePriorityDTO2.setPriorityId(20);
 
         List<TaskTimePriority> taskTimePriorityList = List.of(taskTimePriority, taskTimePriority2);
@@ -134,7 +134,7 @@ class TaskTimePriorityServiceImplTest {
     void shouldUpdateTaskTimePriorityWhenUpdateTaskTimePriority() {
         TaskTimePriorityDTO updatedDTO = new TaskTimePriorityDTO();
         updatedDTO.setTaskTimePriorityId(1);
-        updatedDTO.setTime(new Date());
+        updatedDTO.setTime(1000L);
         updatedDTO.setPriorityId(15);
 
         when(taskTimePriorityRepository.findById(1)).thenReturn(Optional.of(taskTimePriority));

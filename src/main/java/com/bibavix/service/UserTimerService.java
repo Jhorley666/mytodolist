@@ -18,4 +18,10 @@ public interface UserTimerService {
     void deleteUserTimerById(Integer userTimerId);
 
     void onTaskCompleted(Task updatedTask, User user);
+
+    UserTimerDTO startTimer(Integer userId);
+
+    UserTimerDTO getTimerStatus(Integer userId);
+
+    UserTimerDTO pauseTimer(Integer userId);
 }

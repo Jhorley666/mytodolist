@@ -48,7 +48,7 @@ class TaskTimePriorityControllerTest {
     void shouldReturnNotNullTaskTimePriorityWhenCreateTaskTimePriority() {
         //Arrange
         TaskTimePriorityDTO inputDTO = new TaskTimePriorityDTO();
-        inputDTO.setTime(new Date());
+        inputDTO.setTime(1000L);
         inputDTO.setPriorityId(10);
 
         //Act
@@ -99,7 +99,7 @@ class TaskTimePriorityControllerTest {
         //Arrange
         int id = 1;
         TaskTimePriorityDTO inputDTO = new TaskTimePriorityDTO();
-        inputDTO.setTime(new Date());
+        inputDTO.setTime(1000L);
         inputDTO.setPriorityId(15);
 
         //Act

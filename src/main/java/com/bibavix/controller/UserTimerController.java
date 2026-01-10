@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +23,34 @@ import java.util.List;
 public class UserTimerController {
 
     private final UserTimerService userTimerService;
+    private final com.bibavix.service.impl.UserDetailsServiceImpl userDetailsService;
+
+    @PostMapping("/start")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<UserTimerDTO> startTimer(
+            @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
+        com.bibavix.model.User user = userDetailsService.findUserByUsername(userDetails.getUsername());
+        UserTimerDTO userTimerDTO = userTimerService.startTimer(user.getUserId());
+        return ResponseEntity.ok(userTimerDTO);
+    }
+
+    @PostMapping("/pause")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<UserTimerDTO> pauseTimer(
+            @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
+        com.bibavix.model.User user = userDetailsService.findUserByUsername(userDetails.getUsername());
+        UserTimerDTO userTimerDTO = userTimerService.pauseTimer(user.getUserId());
+        return ResponseEntity.ok(userTimerDTO);
+    }
+
+    @GetMapping("/status")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<UserTimerDTO> getTimerStatus(
+            @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
+        com.bibavix.model.User user = userDetailsService.findUserByUsername(userDetails.getUsername());
+        UserTimerDTO userTimerDTO = userTimerService.getTimerStatus(user.getUserId());
+        return ResponseEntity.ok(userTimerDTO);
+    }
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")

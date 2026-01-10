@@ -63,12 +63,12 @@ class TaskControllerTest {
         List<TaskDTO> tasks = Arrays.asList(
                 new TaskDTO("test",
                         "test to test",
-                        "Low",
+                        1,
                         1, 1,
                         1, 1, "2024-04-02", "2024-04-02", "2024-04-02"),
                 new TaskDTO("test",
                         "test to test",
-                        "High",
+                        3,
                         2, 2,
                         2, 2, "2024-04-02", "2024-04-02", "2024-04-02")
         );

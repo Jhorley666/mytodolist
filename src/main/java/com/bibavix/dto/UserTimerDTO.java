@@ -15,6 +15,7 @@ public class UserTimerDTO {
     private Integer idUserTimer;
     private Integer userId;
     private Long totalSecondsAccumulated;
+    private Long remainingSeconds;
     private Timestamp startedAt;
     private Boolean isRunning;
     private Timestamp updatedAt;

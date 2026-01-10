@@ -19,7 +19,7 @@ class TaskTest {
         task.setStatusId((short) 1);
         task.setTitle("Test Title");
         task.setDescription("Test Description");
-        task.setPriority(Task.Priority.High);
+        task.setPriorityId(3);
         LocalDate dueDate = LocalDate.of(2025, 7, 18);
         task.setDueDate(dueDate);
         LocalDateTime now = LocalDateTime.now();
@@ -32,7 +32,7 @@ class TaskTest {
         assertEquals((short) 1, Optional.ofNullable(task.getStatusId()).get());
         assertEquals("Test Title", task.getTitle());
         assertEquals("Test Description", task.getDescription());
-        assertEquals(Task.Priority.High, task.getPriority());
+        assertEquals(3, task.getPriorityId());
         assertEquals(dueDate, task.getDueDate());
         assertEquals(now, task.getCreatedAt());
         assertEquals(now, task.getUpdatedAt());
@@ -56,13 +56,6 @@ class TaskTest {
         task.onUpdate();
         assertEquals(created, task.getCreatedAt());
         assertTrue(task.getUpdatedAt().isAfter(created));
-    }
-
-    @Test
-    void testPriorityEnumValues() {
-        assertEquals(Task.Priority.Low, Task.Priority.valueOf("Low"));
-        assertEquals(Task.Priority.Medium, Task.Priority.valueOf("Medium"));
-        assertEquals(Task.Priority.High, Task.Priority.valueOf("High"));
     }
 
     @Test
