@@ -21,8 +21,7 @@ public class JwtUtils {
     private final AppProperties appProperties;
 
     public String generateJwtToken(Authentication authentication) {
-        UserDetailsImpl userPrincipal = (UserDetailsImpl)
-                authentication.getPrincipal();
+        UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
         String secret = appProperties.getAuth().getTokenSecret(); // get from config
         Key key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         return Jwts.builder()
@@ -34,14 +33,21 @@ public class JwtUtils {
     }
 
     public String getUsernameFromToken(String token) {
+        return getClaimsFromToken(token).getSubject();
+    }
+
+    public Date getExpirationDateFromToken(String token) {
+        return getClaimsFromToken(token).getExpiration();
+    }
+
+    private io.jsonwebtoken.Claims getClaimsFromToken(String token) {
         String secret = appProperties.getAuth().getTokenSecret();
         Key key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+                .getBody();
     }
 
     public boolean validateJwtToken(String authToken) {

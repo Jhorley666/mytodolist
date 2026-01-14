@@ -28,4 +28,21 @@ public class AuthController {
     public ResponseEntity<ResponseCode> registerUser(@RequestBody RegisterRequest registerRequest) {
         return authService.registerUser(registerRequest);
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ResponseCode> logoutUser(jakarta.servlet.http.HttpServletRequest request) {
+        String token = parseJwt(request);
+        if (token != null) {
+            authService.logout(token);
+        }
+        return ResponseEntity.ok(new ResponseCode("Log out successful", org.springframework.http.HttpStatus.OK));
+    }
+
+    private String parseJwt(jakarta.servlet.http.HttpServletRequest request) {
+        String headerAuth = request.getHeader("Authorization");
+        if (org.springframework.util.StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            return headerAuth.substring(7);
+        }
+        return null;
+    }
 }

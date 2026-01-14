@@ -9,6 +9,8 @@ import com.bibavix.dto.ResponseCode;
 import com.bibavix.dto.RegisterRequest;
 import com.bibavix.model.Role;
 import com.bibavix.model.User;
+import com.bibavix.model.BlacklistedToken;
+import com.bibavix.repository.BlacklistedTokenRepository;
 import com.bibavix.repository.RoleRepository;
 import com.bibavix.repository.UserRepository;
 import com.bibavix.service.AuthService;
@@ -25,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +39,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserDetailsServiceImpl userDetailsService;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final BlacklistedTokenRepository blacklistedTokenRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -76,5 +80,17 @@ public class AuthServiceImpl implements AuthService {
 
         userRepository.save(user);
         return ResponseEntity.ok(new ResponseCode("User registered successfully", HttpStatus.OK));
+    }
+
+    @Override
+    public void logout(String token) {
+        if (jwtUtils.validateJwtToken(token)) {
+            Date expiration = jwtUtils.getExpirationDateFromToken(token);
+            BlacklistedToken blacklistedToken = BlacklistedToken.builder()
+                    .token(token)
+                    .expiryDate(expiration.toInstant())
+                    .build();
+            blacklistedTokenRepository.save(blacklistedToken);
+        }
     }
 }
