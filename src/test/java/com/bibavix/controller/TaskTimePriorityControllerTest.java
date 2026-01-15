@@ -1,7 +1,9 @@
 package com.bibavix.controller;
 
 import com.bibavix.dto.TaskTimePriorityDTO;
+import com.bibavix.model.User;
 import com.bibavix.service.TaskTimePriorityService;
+import com.bibavix.service.impl.UserDetailsServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Date;
 import java.util.List;
@@ -28,16 +31,26 @@ class TaskTimePriorityControllerTest {
     @Mock
     TaskTimePriorityDTO taskTimePriorityDTO;
 
+    @Mock
+    UserDetails userDetails;
+
+    @Mock
+    UserDetailsServiceImpl userDetailsService;
+
+    @Mock
+    User user;
+
     @Test
     void shouldReturnNotNullTaskTimePriorityWhenFindById() {
-        //Arrange
+        // Arrange
         int id = 1;
+        String username = "test";
+        // Act
+        when(taskTimePriorityService.getTaskTimePriorityById(id, username)).thenReturn(taskTimePriorityDTO);
+        when(userDetails.getUsername()).thenReturn(username);
+        ResponseEntity<TaskTimePriorityDTO> response = taskTimePriorityController.getTaskTimePriorityById(id, userDetails);
 
-        //Act
-        when(taskTimePriorityService.getTaskTimePriorityById(id)).thenReturn(taskTimePriorityDTO);
-        ResponseEntity<TaskTimePriorityDTO> response = taskTimePriorityController.getTaskTimePriorityById(id);
-
-        //Asserts
+        // Asserts
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -46,16 +59,17 @@ class TaskTimePriorityControllerTest {
 
     @Test
     void shouldReturnNotNullTaskTimePriorityWhenCreateTaskTimePriority() {
-        //Arrange
+        // Arrange
         TaskTimePriorityDTO inputDTO = new TaskTimePriorityDTO();
         inputDTO.setTime(1000L);
         inputDTO.setPriorityId(10);
 
-        //Act
-        when(taskTimePriorityService.createTaskTimePriority(inputDTO)).thenReturn(taskTimePriorityDTO);
-        ResponseEntity<TaskTimePriorityDTO> response = taskTimePriorityController.createTaskTimePriority(inputDTO);
+        // Act
+        when(taskTimePriorityService.createTaskTimePriority(inputDTO, "username")).thenReturn(taskTimePriorityDTO);
+        when(userDetails.getUsername()).thenReturn("username");
+        ResponseEntity<TaskTimePriorityDTO> response = taskTimePriorityController.createTaskTimePriority(inputDTO, userDetails);
 
-        //Asserts
+        // Asserts
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -64,14 +78,14 @@ class TaskTimePriorityControllerTest {
 
     @Test
     void shouldReturnNotNullListWhenGetAllTaskTimePriorities() {
-        //Arrange
+        // Arrange
         List<TaskTimePriorityDTO> taskTimePriorityList = List.of(taskTimePriorityDTO);
 
-        //Act
+        // Act
         when(taskTimePriorityService.getAllTaskTimePriorities()).thenReturn(taskTimePriorityList);
         ResponseEntity<List<TaskTimePriorityDTO>> response = taskTimePriorityController.getAllTaskTimePriorities();
 
-        //Asserts
+        // Asserts
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -80,14 +94,16 @@ class TaskTimePriorityControllerTest {
 
     @Test
     void shouldReturnNotNullTaskTimePriorityWhenGetByPriorityId() {
-        //Arrange
+        // Arrange
         int priorityId = 10;
+        String username = "test";
+        // Act
+        when(taskTimePriorityService.getTaskTimePriorityByPriorityId(priorityId, username)).thenReturn(taskTimePriorityDTO);
+        when(userDetails.getUsername()).thenReturn(username);
+        ResponseEntity<TaskTimePriorityDTO> response = taskTimePriorityController
+                .getTaskTimePriorityByPriorityId(priorityId, userDetails);
 
-        //Act
-        when(taskTimePriorityService.getTaskTimePriorityByPriorityId(priorityId)).thenReturn(taskTimePriorityDTO);
-        ResponseEntity<TaskTimePriorityDTO> response = taskTimePriorityController.getTaskTimePriorityByPriorityId(priorityId);
-
-        //Asserts
+        // Asserts
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -96,17 +112,20 @@ class TaskTimePriorityControllerTest {
 
     @Test
     void shouldReturnNotNullTaskTimePriorityWhenUpdateTaskTimePriority() {
-        //Arrange
+        // Arrange
         int id = 1;
+        String username = "test";
         TaskTimePriorityDTO inputDTO = new TaskTimePriorityDTO();
         inputDTO.setTime(1000L);
         inputDTO.setPriorityId(15);
 
-        //Act
-        when(taskTimePriorityService.updateTaskTimePriority(any(TaskTimePriorityDTO.class))).thenReturn(taskTimePriorityDTO);
-        ResponseEntity<TaskTimePriorityDTO> response = taskTimePriorityController.updateTaskTimePriority(id, inputDTO);
+        // Act
+        when(userDetails.getUsername()).thenReturn("test");
+        when(taskTimePriorityService.updateTaskTimePriority(inputDTO, "test"))
+                .thenReturn(taskTimePriorityDTO);
+        ResponseEntity<TaskTimePriorityDTO> response = taskTimePriorityController.updateTaskTimePriority(id, inputDTO, userDetails);
 
-        //Asserts
+        // Asserts
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -115,15 +134,32 @@ class TaskTimePriorityControllerTest {
 
     @Test
     void shouldReturnOkWhenDeleteTaskTimePriority() {
-        //Arrange
+        // Arrange
         int id = 1;
 
-        //Act
-        ResponseEntity<?> response = taskTimePriorityController.deleteTaskTimePriority(id);
+        // Act
+        ResponseEntity<?> response = taskTimePriorityController.deleteTaskTimePriority(id, userDetails);
 
-        //Asserts
+        // Asserts
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
-}
 
+    @Test
+    void shouldReturnNotNullListWhenGetTaskTimePrioritiesByUserId() {
+        // Arrange
+        String username = "usertest";
+        List<TaskTimePriorityDTO> taskTimePriorityList = List.of(taskTimePriorityDTO);
+        when(userDetails.getUsername()).thenReturn(username);
+        // Act
+        when(taskTimePriorityService.getTaskTimePrioritiesByUser(username)).thenReturn(taskTimePriorityList);
+        ResponseEntity<List<TaskTimePriorityDTO>> response = taskTimePriorityController
+                .getTaskTimePrioritiesByUser(userDetails);
+
+        // Asserts
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(1, response.getBody().size());
+    }
+}

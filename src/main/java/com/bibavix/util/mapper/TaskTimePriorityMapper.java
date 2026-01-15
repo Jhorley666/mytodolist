@@ -11,6 +11,7 @@ public interface TaskTimePriorityMapper {
     @Mapping(target = "taskTimePriorityId", ignore = true)
     @Mapping(target = "time", source = "time")
     @Mapping(target = "priorityId", source = "priorityId")
+    @Mapping(target = "userId", source = "userId")
     TaskTimePriority toEntity(TaskTimePriorityDTO taskTimePriorityDTO);
 
     @Mapping(target = "time", source = "time")
@@ -19,6 +20,7 @@ public interface TaskTimePriorityMapper {
     @Mapping(target = "taskTimePriorityId", ignore = true)
     @Mapping(target = "time", source = "time")
     @Mapping(target = "priorityId", source = "priorityId")
+    @Mapping(target = "userId", source = "userId")
     void updateTaskTimePriorityFromDTO(TaskTimePriorityDTO taskTimePriorityDTO,
-                                       @MappingTarget TaskTimePriority taskTimePriority);
+            @MappingTarget TaskTimePriority taskTimePriority);
 }

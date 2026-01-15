@@ -3,6 +3,7 @@ package com.bibavix.service.impl;
 import com.bibavix.dto.TaskTimePriorityDTO;
 import com.bibavix.exception.ResourceNotFoundException;
 import com.bibavix.model.TaskTimePriority;
+import com.bibavix.model.User;
 import com.bibavix.repository.TaskTimePriorityRepository;
 import com.bibavix.util.mapper.TaskTimePriorityMapper;
 import org.junit.jupiter.api.Assertions;
@@ -31,32 +32,42 @@ class TaskTimePriorityServiceImplTest {
 
     @Mock
     TaskTimePriorityMapper taskTimePriorityMapper;
-
+    @Mock
+    UserDetailsServiceImpl userDetailsService;
+    @Mock
+    User user;
     private TaskTimePriority taskTimePriority;
     private TaskTimePriorityDTO taskTimePriorityDTO;
 
     @BeforeEach
     void setUp() {
         Integer testDate = 1000;
-        
+
         taskTimePriority = new TaskTimePriority();
         taskTimePriority.setTaskTimePriorityId(1);
         taskTimePriority.setTime(testDate);
         taskTimePriority.setPriorityId(10);
+        taskTimePriority.setUserId(100);
 
         taskTimePriorityDTO = new TaskTimePriorityDTO();
         taskTimePriorityDTO.setTaskTimePriorityId(1);
         taskTimePriorityDTO.setTime(1000L);
         taskTimePriorityDTO.setPriorityId(10);
+        taskTimePriorityDTO.setUserId(100);
     }
 
     @Test
     void shouldReturnTaskTimePriorityDTOWhenCreateTaskTimePriority() {
+        String username = "username";
+
         when(taskTimePriorityMapper.toEntity(taskTimePriorityDTO)).thenReturn(taskTimePriority);
         when(taskTimePriorityRepository.save(taskTimePriority)).thenReturn(taskTimePriority);
         when(taskTimePriorityMapper.toDTO(taskTimePriority)).thenReturn(taskTimePriorityDTO);
+        when(userDetailsService.findUserByUsername(username)).thenReturn(user);
+        when(user.getUserId()).thenReturn(1);
 
-        TaskTimePriorityDTO createdTaskTimePriority = taskTimePriorityService.createTaskTimePriority(taskTimePriorityDTO);
+        TaskTimePriorityDTO createdTaskTimePriority = taskTimePriorityService
+                .createTaskTimePriority(taskTimePriorityDTO, "username");
 
         Assertions.assertNotNull(createdTaskTimePriority);
         Assertions.assertEquals(10, createdTaskTimePriority.getPriorityId());
@@ -92,56 +103,77 @@ class TaskTimePriorityServiceImplTest {
 
     @Test
     void shouldReturnTaskTimePriorityWhenGetTaskTimePriorityById() {
-        when(taskTimePriorityRepository.findById(1)).thenReturn(Optional.of(taskTimePriority));
-        when(taskTimePriorityMapper.toDTO(taskTimePriority)).thenReturn(taskTimePriorityDTO);
 
-        TaskTimePriorityDTO foundTaskTimePriority = taskTimePriorityService.getTaskTimePriorityById(1);
+        String username = "test";
+
+        when(taskTimePriorityRepository.findByPriorityIdAndUserId(1, 1)).thenReturn(taskTimePriority);
+        when(taskTimePriorityMapper.toDTO(taskTimePriority)).thenReturn(taskTimePriorityDTO);
+        when(userDetailsService.findUserByUsername(username)).thenReturn(user);
+        when(user.getUserId()).thenReturn(1);
+
+        TaskTimePriorityDTO foundTaskTimePriority = taskTimePriorityService.getTaskTimePriorityById(1, username);
 
         Assertions.assertNotNull(foundTaskTimePriority);
         Assertions.assertEquals(10, foundTaskTimePriority.getPriorityId());
-        verify(taskTimePriorityRepository, times(1)).findById(1);
+        verify(taskTimePriorityRepository, times(1)).findByPriorityIdAndUserId(1, 1);
     }
 
     @Test
     void shouldThrowResourceNotFoundExceptionWhenGetTaskTimePriorityById() {
-        when(taskTimePriorityRepository.findById(1)).thenReturn(Optional.empty());
+        String username = "test";
 
-        Assertions.assertThrows(ResourceNotFoundException.class, () ->
-                taskTimePriorityService.getTaskTimePriorityById(1));
+        when(taskTimePriorityRepository.findByPriorityIdAndUserId(1, 1)).thenReturn(null);
+        when(userDetailsService.findUserByUsername(username)).thenReturn(user);
+        when(user.getUserId()).thenReturn(1);
+
+        Assertions.assertThrows(ResourceNotFoundException.class,
+                () -> taskTimePriorityService.getTaskTimePriorityById(1, username));
     }
 
     @Test
     void shouldReturnTaskTimePriorityWhenGetTaskTimePriorityByPriorityId() {
-        when(taskTimePriorityRepository.findByPriorityId(10)).thenReturn(taskTimePriority);
-        when(taskTimePriorityMapper.toDTO(taskTimePriority)).thenReturn(taskTimePriorityDTO);
+        String username = "test";
 
-        TaskTimePriorityDTO foundTaskTimePriority = taskTimePriorityService.getTaskTimePriorityByPriorityId(10);
+        when(taskTimePriorityRepository.findByPriorityIdAndUserId(10,1)).thenReturn(taskTimePriority);
+        when(taskTimePriorityMapper.toDTO(taskTimePriority)).thenReturn(taskTimePriorityDTO);
+        when(userDetailsService.findUserByUsername(username)).thenReturn(user);
+        when(user.getUserId()).thenReturn(1);
+
+        TaskTimePriorityDTO foundTaskTimePriority = taskTimePriorityService.getTaskTimePriorityByPriorityId(10, username);
 
         Assertions.assertNotNull(foundTaskTimePriority);
         Assertions.assertEquals(10, foundTaskTimePriority.getPriorityId());
-        verify(taskTimePriorityRepository, times(1)).findByPriorityId(10);
+        verify(taskTimePriorityRepository, times(1)).findByPriorityIdAndUserId(10, 1);
     }
 
     @Test
     void shouldThrowResourceNotFoundExceptionWhenGetTaskTimePriorityByPriorityId() {
-        when(taskTimePriorityRepository.findByPriorityId(10)).thenReturn(null);
 
-        Assertions.assertThrows(ResourceNotFoundException.class, () ->
-                taskTimePriorityService.getTaskTimePriorityByPriorityId(10));
+        String username = "test";
+
+        when(taskTimePriorityRepository.findByPriorityIdAndUserId(10, 1)).thenReturn(null);
+        when(userDetailsService.findUserByUsername(username)).thenReturn(user);
+        when(user.getUserId()).thenReturn(1);
+
+        Assertions.assertThrows(ResourceNotFoundException.class,
+                () -> taskTimePriorityService.getTaskTimePriorityByPriorityId(10, username));
     }
 
     @Test
     void shouldUpdateTaskTimePriorityWhenUpdateTaskTimePriority() {
+        String username = "test";
         TaskTimePriorityDTO updatedDTO = new TaskTimePriorityDTO();
         updatedDTO.setTaskTimePriorityId(1);
         updatedDTO.setTime(1000L);
         updatedDTO.setPriorityId(15);
 
-        when(taskTimePriorityRepository.findById(1)).thenReturn(Optional.of(taskTimePriority));
+        when(taskTimePriorityRepository.findByPriorityIdAndUserId(1, 1)).thenReturn(taskTimePriority);
         when(taskTimePriorityRepository.save(taskTimePriority)).thenReturn(taskTimePriority);
         when(taskTimePriorityMapper.toDTO(taskTimePriority)).thenReturn(updatedDTO);
+        when(userDetailsService.findUserByUsername(username)).thenReturn(user);
+        when(user.getUserId()).thenReturn(1);
 
-        TaskTimePriorityDTO result = taskTimePriorityService.updateTaskTimePriority(updatedDTO);
+        TaskTimePriorityDTO result = taskTimePriorityService.updateTaskTimePriority(updatedDTO, username);
 
         Assertions.assertNotNull(result);
         verify(taskTimePriorityMapper).updateTaskTimePriorityFromDTO(updatedDTO, taskTimePriority);
@@ -150,28 +182,53 @@ class TaskTimePriorityServiceImplTest {
 
     @Test
     void shouldThrowResourceNotFoundExceptionWhenUpdateTaskTimePriorityNotFound() {
-        when(taskTimePriorityRepository.findById(1)).thenReturn(Optional.empty());
+        String username = "test";
 
-        Assertions.assertThrows(ResourceNotFoundException.class, () ->
-                taskTimePriorityService.updateTaskTimePriority(taskTimePriorityDTO));
+        when(taskTimePriorityRepository.findByPriorityIdAndUserId(1, 1)).thenReturn(null);
+        when(userDetailsService.findUserByUsername(username)).thenReturn(user);
+        when(user.getUserId()).thenReturn(1);
+
+        Assertions.assertThrows(ResourceNotFoundException.class,
+                () -> taskTimePriorityService.updateTaskTimePriority(taskTimePriorityDTO, username));
     }
 
     @Test
     void verifyDeleteTaskTimePriority() {
-        when(taskTimePriorityRepository.findById(1)).thenReturn(Optional.of(taskTimePriority));
-        when(taskTimePriorityMapper.toDTO(taskTimePriority)).thenReturn(taskTimePriorityDTO);
+        String username = "test";
 
-        taskTimePriorityService.deleteTaskTimePriorityById(1);
+        when(taskTimePriorityRepository.findByPriorityIdAndUserId(1, 1)).thenReturn(taskTimePriority);
+        when(taskTimePriorityMapper.toDTO(taskTimePriority)).thenReturn(taskTimePriorityDTO);
+        when(userDetailsService.findUserByUsername(username)).thenReturn(user);
+        when(user.getUserId()).thenReturn(1);
+
+        taskTimePriorityService.deleteTaskTimePriorityById(1, username);
 
         verify(taskTimePriorityRepository, times(1)).deleteById(1);
-        verify(taskTimePriorityRepository, times(1)).findById(1);
+        verify(taskTimePriorityRepository, times(1)).findByPriorityIdAndUserId(1, 1);
     }
 
     @Test
     void shouldThrowResourceNotFoundExceptionWhenDeleteTaskTimePriorityNotFound() {
-        when(taskTimePriorityRepository.findById(1)).thenReturn(Optional.empty());
+        String username = "test";
 
-        Assertions.assertThrows(ResourceNotFoundException.class, () ->
-                taskTimePriorityService.deleteTaskTimePriorityById(1));
+        when(taskTimePriorityRepository.findByPriorityIdAndUserId(1, 1)).thenReturn(null);
+        when(userDetailsService.findUserByUsername(username)).thenReturn(user);
+        when(user.getUserId()).thenReturn(1);
+
+        Assertions.assertThrows(ResourceNotFoundException.class,
+                () -> taskTimePriorityService.deleteTaskTimePriorityById(1, username));
+    }
+
+    @Test
+    void shouldReturnTaskTimePriorityListWhenGetTaskTimePrioritiesByUserId() {
+        when(taskTimePriorityRepository.findByUserId(100)).thenReturn(List.of(taskTimePriority));
+        when(taskTimePriorityMapper.toDTO(taskTimePriority)).thenReturn(taskTimePriorityDTO);
+        when(userDetailsService.findUserByUsername("usertest")).thenReturn(user);
+        when(user.getUserId()).thenReturn(100);
+        List<TaskTimePriorityDTO> result = taskTimePriorityService.getTaskTimePrioritiesByUser("usertest");
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(1, result.size());
+        verify(taskTimePriorityRepository, times(1)).findByUserId(100);
     }
 }

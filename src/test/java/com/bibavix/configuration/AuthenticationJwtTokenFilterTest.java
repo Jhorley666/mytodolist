@@ -1,5 +1,6 @@
 package com.bibavix.configuration;
 
+import com.bibavix.repository.BlacklistedTokenRepository;
 import com.bibavix.service.impl.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -33,7 +34,8 @@ class AuthenticationJwtTokenFilterTest {
     FilterChain filterChain;
     @Mock
     UserDetails userDetails;
-
+    @Mock
+    BlacklistedTokenRepository blacklistedTokenRepository;
     @Test
     void shouldDoFilterInternal() throws ServletException, IOException {
         String jwt = "Bearer aei23au5sd4ak23=";

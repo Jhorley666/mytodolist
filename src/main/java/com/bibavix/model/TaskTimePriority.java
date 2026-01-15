@@ -22,4 +22,7 @@ public class TaskTimePriority {
 
     @Column(name = "priority_id")
     private Integer priorityId;
+
+    @Column(name = "user_id", nullable = false, columnDefinition = "INT UNSIGNED")
+    private Integer userId;
 }
