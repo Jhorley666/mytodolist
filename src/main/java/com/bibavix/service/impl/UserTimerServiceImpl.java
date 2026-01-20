@@ -159,7 +159,7 @@ public class UserTimerServiceImpl implements UserTimerService {
             return;
         }
 
-        int secondsToAdd = taskTimePriorityRepository.findByPriorityId(priority.intValue()).getTime();
+        int secondsToAdd = taskTimePriorityRepository.findByPriorityIdAndUserId(priority, user.getUserId()).getTime();
         if (secondsToAdd <= 0) {
             return; // nada que sumar
         }
