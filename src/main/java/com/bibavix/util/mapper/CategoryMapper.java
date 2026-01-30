@@ -4,9 +4,10 @@ import com.bibavix.dto.CategoryDTO;
 import com.bibavix.model.Category;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CategoryMapper {
     @Mapping(target = "categoryId", ignore = true)
     @Mapping(target = "userId", ignore = true)
