@@ -42,7 +42,7 @@ public class TaskController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class)))
     })
     @GetMapping
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<List<TaskDTO>> getAllTasks(
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
         List<TaskDTO> tasks = taskService.getAllTasksByUser(userDetails.getUsername());
@@ -60,7 +60,7 @@ public class TaskController {
         @ApiResponse(responseCode = "404", description = "Task not found")
     })
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<Task> getTaskById(
             @Parameter(description = "Task ID", required = true) @PathVariable Integer id,
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
@@ -78,7 +78,7 @@ public class TaskController {
         @ApiResponse(responseCode = "400", description = "Invalid input")
     })
     @PostMapping
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_CREATE')")
     public ResponseEntity<Task> createTask(
             @Parameter(description = "Task to create", required = true, schema = @Schema(implementation = Task.class))
             @RequestBody TaskDTO task,
@@ -98,7 +98,7 @@ public class TaskController {
         @ApiResponse(responseCode = "404", description = "Task not found")
     })
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_UPDATE')")
     public ResponseEntity<TaskDTO> updateTask(
             @Parameter(description = "Task ID", required = true) @PathVariable Integer id,
             @Parameter(description = "Updated task", required = true, schema = @Schema(implementation = Task.class))
@@ -118,7 +118,7 @@ public class TaskController {
         @ApiResponse(responseCode = "404", description = "Task not found")
     })
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_DELETE')")
     public ResponseEntity<ResponseCode> deleteTask(
             @Parameter(description = "Task ID", required = true) @PathVariable Integer id,
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {

@@ -1,5 +1,6 @@
 package com.bibavix.dto;
 
+import com.bibavix.model.Permission;
 import com.bibavix.model.Role;
 import com.bibavix.model.User;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,28 @@ class UserDetailsImplTest {
         assertEquals(1, userDetails.getAuthorities().size());
         GrantedAuthority authority = userDetails.getAuthorities().iterator().next();
         assertEquals("ROLE_USER", authority.getAuthority());
+        assertEquals("ROLE_USER", authority.getAuthority());
+    }
+
+    @Test
+    void build_shouldIncludeDirectUserPermissions() {
+        User user = new User();
+        user.setUsername("bob");
+        user.setPassword("password");
+        user.setRoles(Collections.emptySet());
+
+        Permission permission = new Permission();
+        permission.setPermissionName("task:read");
+        permission.setPermissionId(1);
+        Set<Permission> permissions = new HashSet<>();
+        permissions.add(permission);
+        user.setPermissions(permissions);
+
+        UserDetailsImpl userDetails = UserDetailsImpl.build(user);
+
+        assertEquals(1, userDetails.getAuthorities().size());
+        assertTrue(userDetails.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("task:read")));
     }
 
     @Test
