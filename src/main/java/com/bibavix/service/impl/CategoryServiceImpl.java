@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -33,14 +34,14 @@ public class CategoryServiceImpl implements CategoryService {
         List<Category> categories = categoryRepository.findAllByUserId(userId);
         return categories.stream()
                 .map(categoryMapper::toDTO)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
     public CategoryDTO getCategoryById(Integer categoryId) {
         Category category = categoryRepository
-                .findById(categoryId).orElseThrow(() ->
-                        new ResourceNotFoundException("Category with id " + categoryId + " not found."));
+                .findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category with id " + categoryId + " not found."));
         return categoryMapper.toDTO(category);
     }
 
@@ -65,13 +66,13 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     public void validateCategory(CategoryDTO categoryDTO) {
-        if (categoryDTO.getCategoryId() != null && !categoryRepository.existsById(categoryDTO.getCategoryId())){
+        if (categoryDTO.getCategoryId() != null && !categoryRepository.existsById(categoryDTO.getCategoryId())) {
             throw new IllegalArgumentException("Category not found for ID: " + categoryDTO.getCategoryId());
         }
     }
 
-    public void validateCategoryByUser(CategoryDTO categoryDTO, Integer userId){
-        if (!categoryDTO.getUserId().equals(userId)){
+    public void validateCategoryByUser(CategoryDTO categoryDTO, Integer userId) {
+        if (!categoryDTO.getUserId().equals(userId)) {
             throw new SecurityException("User not authorized to update category");
         }
     }

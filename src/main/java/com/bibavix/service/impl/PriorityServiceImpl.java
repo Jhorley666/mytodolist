@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -32,14 +33,13 @@ public class PriorityServiceImpl implements PriorityService {
         List<Priority> priorityList = priorityRepository.findAll();
         return priorityList.stream()
                 .map(priorityMapper::toDTO)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
     public PriorityDTO getPriorityById(Integer priorityId) {
         Priority priority = priorityRepository.findById(priorityId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Priority with id " + priorityId + " not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Priority with id " + priorityId + " not found."));
         return priorityMapper.toDTO(priority);
     }
 
@@ -59,4 +59,3 @@ public class PriorityServiceImpl implements PriorityService {
         priorityRepository.deleteById(priorityId);
     }
 }
-

@@ -23,10 +23,10 @@ public class GlobalExceptionHandler {
      * @description Handle validation errors from @Valid (e.g., TaskDTO)
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex){
+    public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, Object> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(error ->
-                errors.put(error.getField(), error.getDefaultMessage()));
+        ex.getBindingResult().getFieldErrors()
+                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
         Map<String, Object> response = new HashMap<>();
         response.put(STATUS, HttpStatus.BAD_REQUEST.value());
         response.put(ERROR, "Validation Failed");
@@ -37,13 +37,14 @@ public class GlobalExceptionHandler {
     /**
      * @author jhorley
      * @return ResponseEntity<Map<String, Object>>
-     * @description Handle constraint violations (e.g., from path variables or query params)
+     * @description Handle constraint violations (e.g., from path variables or query
+     *              params)
      */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Map<String, Object>> handleConstraintViolation(ConstraintViolationException ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getConstraintViolations().forEach(violation ->
-                errors.put(violation.getPropertyPath().toString(), violation.getMessage()));
+        ex.getConstraintViolations()
+                .forEach(violation -> errors.put(violation.getPropertyPath().toString(), violation.getMessage()));
         Map<String, Object> response = new HashMap<>();
         response.put(STATUS, HttpStatus.BAD_REQUEST.value());
         response.put(ERROR, "Validation Failed");
@@ -77,6 +78,36 @@ public class GlobalExceptionHandler {
         response.put(ERROR, "Forbidden");
         response.put(MESSAGE, ex.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
+    /**
+     * @author jhorley
+     * @return ResponseEntity<Map<String, Object>>
+     * @description Handle AccessDeniedException (e.g., missing authority)
+     */
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAccessDeniedException(
+            org.springframework.security.access.AccessDeniedException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put(STATUS, HttpStatus.FORBIDDEN.value());
+        response.put(ERROR, "Forbidden");
+        response.put(MESSAGE, "Access Denied: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
+    /**
+     * @author jhorley
+     * @return ResponseEntity<Map<String, Object>>
+     * @description Handle AuthenticationException (e.g., invalid token)
+     */
+    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+    public ResponseEntity<Map<String, Object>> handleAuthenticationException(
+            org.springframework.security.core.AuthenticationException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put(STATUS, HttpStatus.UNAUTHORIZED.value());
+        response.put(ERROR, "Unauthorized");
+        response.put(MESSAGE, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     /**

@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -27,17 +28,17 @@ public class TaskStatusServiceImpl implements TaskStatusService {
 
     @Override
     public List<TaskStatusDTO> getAllTaskStatus() {
-        List<TaskStatus> taskStatusList =  taskStatusRepository.findAll();
+        List<TaskStatus> taskStatusList = taskStatusRepository.findAll();
         return taskStatusList.stream()
                 .map(taskStatusMapper::toDTO)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
     public TaskStatusDTO getTaskStatusById(Integer taskStatusId) {
         TaskStatus taskStatus = taskStatusRepository.findById(taskStatusId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Task status with id " + taskStatusId + " not found."));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Task status with id " + taskStatusId + " not found."));
         return taskStatusMapper.toDTO(taskStatus);
     }
 

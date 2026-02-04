@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -37,23 +38,25 @@ public class TaskTimePriorityServiceImpl implements TaskTimePriorityService {
         List<TaskTimePriority> taskTimePriorityList = taskTimePriorityRepository.findAll();
         return taskTimePriorityList.stream()
                 .map(taskTimePriorityMapper::toDTO)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
     public TaskTimePriorityDTO getTaskTimePriorityById(Integer taskTimePriorityId, String username) {
         User user = userDetailsService.findUserByUsername(username);
-        TaskTimePriority taskTimePriority = taskTimePriorityRepository.
-                findByPriorityIdAndUserId(taskTimePriorityId, user.getUserId());
-        if (Objects.isNull(taskTimePriority)) throw new ResourceNotFoundException(
-                "TaskTimePriority with id " + taskTimePriorityId + " not found.");
+        TaskTimePriority taskTimePriority = taskTimePriorityRepository.findByPriorityIdAndUserId(taskTimePriorityId,
+                user.getUserId());
+        if (Objects.isNull(taskTimePriority))
+            throw new ResourceNotFoundException(
+                    "TaskTimePriority with id " + taskTimePriorityId + " not found.");
         return taskTimePriorityMapper.toDTO(taskTimePriority);
     }
 
     @Override
     public TaskTimePriorityDTO getTaskTimePriorityByPriorityId(Integer priorityId, String username) {
         User user = userDetailsService.findUserByUsername(username);
-        TaskTimePriority taskTimePriority = taskTimePriorityRepository.findByPriorityIdAndUserId(priorityId, user.getUserId());
+        TaskTimePriority taskTimePriority = taskTimePriorityRepository.findByPriorityIdAndUserId(priorityId,
+                user.getUserId());
         if (Objects.isNull(taskTimePriority)) {
             throw new ResourceNotFoundException("TaskTimePriority with priority id " + priorityId + " not found.");
         }
@@ -64,11 +67,12 @@ public class TaskTimePriorityServiceImpl implements TaskTimePriorityService {
     public TaskTimePriorityDTO updateTaskTimePriority(TaskTimePriorityDTO taskTimePriorityDTO, String username) {
         Integer taskTimePriorityId = taskTimePriorityDTO.getTaskTimePriorityId();
         User user = userDetailsService.findUserByUsername(username);
-        TaskTimePriority taskTimePriority = taskTimePriorityRepository.
-                findByPriorityIdAndUserId(taskTimePriorityId, user.getUserId());
+        TaskTimePriority taskTimePriority = taskTimePriorityRepository.findByPriorityIdAndUserId(taskTimePriorityId,
+                user.getUserId());
 
-        if (Objects.isNull(taskTimePriority)) throw new ResourceNotFoundException(
-                "TaskTimePriority with id " + taskTimePriorityId + " not found.");
+        if (Objects.isNull(taskTimePriority))
+            throw new ResourceNotFoundException(
+                    "TaskTimePriority with id " + taskTimePriorityId + " not found.");
 
         taskTimePriorityMapper.updateTaskTimePriorityFromDTO(taskTimePriorityDTO, taskTimePriority);
         TaskTimePriority updatedTaskTimePriority = taskTimePriorityRepository.save(taskTimePriority);
@@ -87,7 +91,7 @@ public class TaskTimePriorityServiceImpl implements TaskTimePriorityService {
         List<TaskTimePriority> taskTimePriorityList = taskTimePriorityRepository.findByUserId(user.getUserId());
         return taskTimePriorityList.stream()
                 .map(taskTimePriorityMapper::toDTO)
-                .toList();
+                .collect(Collectors.toList());
     }
 
 }

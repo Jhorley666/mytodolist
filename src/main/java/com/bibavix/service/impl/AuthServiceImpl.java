@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +53,7 @@ public class AuthServiceImpl implements AuthService {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority).toList();
+                .map(GrantedAuthority::getAuthority).collect(Collectors.toList());
 
         return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), roles));
     }

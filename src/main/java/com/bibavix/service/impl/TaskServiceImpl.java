@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -36,10 +37,9 @@ public class TaskServiceImpl implements TaskService {
         validateCategoryAndStatus(taskDTO);
         Task task = taskMapper.toEntity(taskDTO);
         task.setUserId(user.getUserId());
-        task.setStatusId(Objects.nonNull(taskDTO.getStatusId())  ? taskDTO.getStatusId().shortValue() : (short) 1);
+        task.setStatusId(Objects.nonNull(taskDTO.getStatusId()) ? taskDTO.getStatusId().shortValue() : (short) 1);
         return taskRepository.save(task);
     }
-
 
     @Transactional
     public TaskDTO updateTask(Integer taskId, TaskDTO taskDTO, String username) {
@@ -60,8 +60,7 @@ public class TaskServiceImpl implements TaskService {
         taskMapper.updateTaskFromDTO(taskDTO, task);
         Task updatedTask = taskRepository.save(task);
 
-        boolean transitionedToCompleted =
-                previousStatus.getStatusId() != 3 &&
+        boolean transitionedToCompleted = previousStatus.getStatusId() != 3 &&
                 updatedTask.getStatusId() == 3;
         if (transitionedToCompleted) {
             log.info("onTaskCompleted");
@@ -87,7 +86,7 @@ public class TaskServiceImpl implements TaskService {
         List<Task> tasks = taskRepository.findAllByUserId(user.getUserId());
         return tasks.stream()
                 .map(taskMapper::toDTO)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public Task findTaskById(Integer taskId) {
@@ -103,6 +102,5 @@ public class TaskServiceImpl implements TaskService {
             throw new IllegalArgumentException("Status not found for ID: " + taskDTO.getStatusId());
         }
     }
-
 
 }

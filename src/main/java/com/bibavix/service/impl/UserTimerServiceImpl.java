@@ -19,6 +19,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -54,7 +55,6 @@ public class UserTimerServiceImpl implements UserTimerService {
         return dto;
     }
 
-
     @Override
     @Transactional
     public UserTimerDTO pauseTimer(Integer userId) {
@@ -81,16 +81,13 @@ public class UserTimerServiceImpl implements UserTimerService {
         return dto;
     }
 
-
-
     @Override
     @Transactional
     public UserTimerDTO getTimerStatus(Integer userId) {
 
         UserTimer userTimer = userTimerRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "UserTimer not found for userId " + userId
-                ));
+                        "UserTimer not found for userId " + userId));
 
         long remainingSeconds = syncTimerState(userTimer);
 
@@ -113,7 +110,7 @@ public class UserTimerServiceImpl implements UserTimerService {
         List<UserTimer> userTimerList = userTimerRepository.findAll();
         return userTimerList.stream()
                 .map(userTimerMapper::toDTO)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -180,11 +177,9 @@ public class UserTimerServiceImpl implements UserTimerService {
 
         long elapsedSeconds = Duration.between(
                 userTimer.getStartedAt().toInstant(),
-                Instant.now()
-        ).getSeconds();
+                Instant.now()).getSeconds();
 
-        long remainingSeconds =
-                userTimer.getTotalSecondsAccumulated() - elapsedSeconds;
+        long remainingSeconds = userTimer.getTotalSecondsAccumulated() - elapsedSeconds;
 
         if (remainingSeconds <= 0) {
             // El timer expiró (posiblemente durante una caída)
