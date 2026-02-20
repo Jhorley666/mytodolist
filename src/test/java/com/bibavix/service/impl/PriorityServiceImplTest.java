@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -34,14 +35,17 @@ class PriorityServiceImplTest {
     private Priority priority;
     private PriorityDTO priorityDTO;
 
+    private final UUID priorityId1 = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private final UUID priorityId2 = UUID.fromString("00000000-0000-0000-0000-000000000002");
+
     @BeforeEach
     void setUp() {
         priority = new Priority();
-        priority.setPriorityId(1);
+        priority.setPriorityId(priorityId1);
         priority.setPriorityName("High");
 
         priorityDTO = new PriorityDTO();
-        priorityDTO.setPriorityId(1);
+        priorityDTO.setPriorityId(priorityId1);
         priorityDTO.setPriorityName("High");
     }
 
@@ -63,11 +67,11 @@ class PriorityServiceImplTest {
     @Test
     void shouldReturnPriorityListWhenGetAllPriorities() {
         Priority priority2 = new Priority();
-        priority2.setPriorityId(2);
+        priority2.setPriorityId(priorityId2);
         priority2.setPriorityName("Low");
 
         PriorityDTO priorityDTO2 = new PriorityDTO();
-        priorityDTO2.setPriorityId(2);
+        priorityDTO2.setPriorityId(priorityId2);
         priorityDTO2.setPriorityName("Low");
 
         List<Priority> priorityList = List.of(priority, priority2);
@@ -85,31 +89,30 @@ class PriorityServiceImplTest {
 
     @Test
     void shouldReturnPriorityWhenGetPriorityById() {
-        when(priorityRepository.findById(1)).thenReturn(Optional.of(priority));
+        when(priorityRepository.findById(priorityId1)).thenReturn(Optional.of(priority));
         when(priorityMapper.toDTO(priority)).thenReturn(priorityDTO);
 
-        PriorityDTO foundPriority = priorityService.getPriorityById(1);
+        PriorityDTO foundPriority = priorityService.getPriorityById(priorityId1);
 
         Assertions.assertNotNull(foundPriority);
         Assertions.assertEquals("High", foundPriority.getPriorityName());
-        verify(priorityRepository, times(1)).findById(1);
+        verify(priorityRepository, times(1)).findById(priorityId1);
     }
 
     @Test
     void shouldThrowPriorityNotFoundExceptionWhenGetPriorityById() {
-        when(priorityRepository.findById(1)).thenReturn(Optional.empty());
+        when(priorityRepository.findById(priorityId1)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(ResourceNotFoundException.class, () ->
-                priorityService.getPriorityById(1));
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> priorityService.getPriorityById(priorityId1));
     }
 
     @Test
     void shouldUpdatePriorityWhenUpdatePriority() {
         PriorityDTO updatedDTO = new PriorityDTO();
-        updatedDTO.setPriorityId(1);
+        updatedDTO.setPriorityId(priorityId1);
         updatedDTO.setPriorityName("Medium");
 
-        when(priorityRepository.findById(1)).thenReturn(Optional.of(priority));
+        when(priorityRepository.findById(priorityId1)).thenReturn(Optional.of(priority));
         when(priorityRepository.save(priority)).thenReturn(priority);
         when(priorityMapper.toDTO(priority)).thenReturn(updatedDTO);
 
@@ -122,29 +125,26 @@ class PriorityServiceImplTest {
 
     @Test
     void shouldThrowPriorityNotFoundExceptionWhenUpdatePriorityNotFound() {
-        when(priorityRepository.findById(1)).thenReturn(Optional.empty());
+        when(priorityRepository.findById(priorityId1)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(ResourceNotFoundException.class, () ->
-                priorityService.updatePriority(priorityDTO));
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> priorityService.updatePriority(priorityDTO));
     }
 
     @Test
     void verifyDeletePriority() {
-        when(priorityRepository.findById(1)).thenReturn(Optional.of(priority));
+        when(priorityRepository.findById(priorityId1)).thenReturn(Optional.of(priority));
         when(priorityMapper.toDTO(priority)).thenReturn(priorityDTO);
 
-        priorityService.deletePriority(1);
+        priorityService.deletePriority(priorityId1);
 
-        verify(priorityRepository, times(1)).deleteById(1);
-        verify(priorityRepository, times(1)).findById(1);
+        verify(priorityRepository, times(1)).deleteById(priorityId1);
+        verify(priorityRepository, times(1)).findById(priorityId1);
     }
 
     @Test
     void shouldThrowPriorityNotFoundExceptionWhenDeletePriorityNotFound() {
-        when(priorityRepository.findById(1)).thenReturn(Optional.empty());
+        when(priorityRepository.findById(priorityId1)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(ResourceNotFoundException.class, () ->
-                priorityService.deletePriority(1));
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> priorityService.deletePriority(priorityId1));
     }
 }
-

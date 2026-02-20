@@ -17,6 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
+import java.util.UUID;
+
 @ExtendWith(MockitoExtension.class)
 class UserDetailsServiceImplTest {
 
@@ -40,15 +42,15 @@ class UserDetailsServiceImplTest {
     void shouldThrowsUsernameNotFoundExceptionWhenLoadUserByUsername() {
         String username = "usertest";
         when(userRepository.findByUsername(username)).thenThrow(new UsernameNotFoundException("User not found!"));
-        Assertions.assertThrows(UsernameNotFoundException.class, () ->
-                userDetailsService.loadUserByUsername(username));
+        Assertions.assertThrows(UsernameNotFoundException.class, () -> userDetailsService.loadUserByUsername(username));
     }
 
     @Test
     void shouldReturnUserWhenGetUserByUserName() {
         // arrange
         User user = new User();
-        user.setUserId(1);
+        UUID userId = UUID.randomUUID();
+        user.setUserId(userId);
         when(userRepository.findByUsername("root")).thenReturn(Optional.of(user));
 
         // act
@@ -56,7 +58,7 @@ class UserDetailsServiceImplTest {
 
         // asserts
         Assertions.assertNotNull(userToSearch);
-        Assertions.assertEquals(1, user.getUserId());
+        Assertions.assertEquals(userId, user.getUserId());
     }
 
 }

@@ -1,6 +1,7 @@
 package com.bibavix.service.impl;
 
 import com.bibavix.dto.TaskTimePriorityDTO;
+import java.util.UUID;
 import com.bibavix.exception.ResourceNotFoundException;
 import com.bibavix.model.TaskTimePriority;
 import com.bibavix.model.User;
@@ -42,7 +43,7 @@ public class TaskTimePriorityServiceImpl implements TaskTimePriorityService {
     }
 
     @Override
-    public TaskTimePriorityDTO getTaskTimePriorityById(Integer taskTimePriorityId, String username) {
+    public TaskTimePriorityDTO getTaskTimePriorityById(UUID taskTimePriorityId, String username) {
         User user = userDetailsService.findUserByUsername(username);
         TaskTimePriority taskTimePriority = taskTimePriorityRepository.findByPriorityIdAndUserId(taskTimePriorityId,
                 user.getUserId());
@@ -53,7 +54,7 @@ public class TaskTimePriorityServiceImpl implements TaskTimePriorityService {
     }
 
     @Override
-    public TaskTimePriorityDTO getTaskTimePriorityByPriorityId(Integer priorityId, String username) {
+    public TaskTimePriorityDTO getTaskTimePriorityByPriorityId(UUID priorityId, String username) {
         User user = userDetailsService.findUserByUsername(username);
         TaskTimePriority taskTimePriority = taskTimePriorityRepository.findByPriorityIdAndUserId(priorityId,
                 user.getUserId());
@@ -65,7 +66,7 @@ public class TaskTimePriorityServiceImpl implements TaskTimePriorityService {
 
     @Override
     public TaskTimePriorityDTO updateTaskTimePriority(TaskTimePriorityDTO taskTimePriorityDTO, String username) {
-        Integer taskTimePriorityId = taskTimePriorityDTO.getTaskTimePriorityId();
+        UUID taskTimePriorityId = taskTimePriorityDTO.getTaskTimePriorityId();
         User user = userDetailsService.findUserByUsername(username);
         TaskTimePriority taskTimePriority = taskTimePriorityRepository.findByPriorityIdAndUserId(taskTimePriorityId,
                 user.getUserId());
@@ -80,7 +81,7 @@ public class TaskTimePriorityServiceImpl implements TaskTimePriorityService {
     }
 
     @Override
-    public void deleteTaskTimePriorityById(Integer taskTimePriorityId, String username) {
+    public void deleteTaskTimePriorityById(UUID taskTimePriorityId, String username) {
         getTaskTimePriorityById(taskTimePriorityId, username);
         taskTimePriorityRepository.deleteById(taskTimePriorityId);
     }

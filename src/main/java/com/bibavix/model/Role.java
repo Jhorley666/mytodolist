@@ -4,9 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.JdbcTypeCode;
 
+import java.sql.Types;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -15,9 +18,10 @@ import java.util.Set;
 @Table(name = "roles", catalog = "todo_list", schema = "todo_list")
 public class Role {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "role_id")
-    private Integer roleId;
+    @GeneratedValue
+    @Column(name = "role_id", columnDefinition = "BINARY(16)", updatable = false, nullable = false)
+    @JdbcTypeCode(Types.BINARY)
+    private UUID roleId;
 
     @Column(name = "name")
     private String name;

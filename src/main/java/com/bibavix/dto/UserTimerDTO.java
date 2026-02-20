@@ -6,14 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserTimerDTO {
 
-    private Integer idUserTimer;
-    private Integer userId;
+    private UUID idUserTimer;
+    private UUID userId;
     private Long totalSecondsAccumulated;
     private Long remainingSeconds;
     private Timestamp startedAt;

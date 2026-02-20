@@ -9,6 +9,7 @@ import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBl
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 
 @Data
@@ -25,15 +26,15 @@ public class TaskDTO {
     @Schema(description = "Description of the task", example = "Monthly sales report")
     private String description;
 
-    private Integer priorityId;
+    private UUID priorityId;
 
-    private Integer taskId;
+    private UUID taskId;
 
-    private Integer userId;
+    private UUID userId;
 
-    private Integer categoryId;
+    private UUID categoryId;
 
-    private Integer statusId;
+    private UUID statusId;
 
     private String dueDate; // Usamos String para recibir la fecha en formato ISO (ej. "2025-06-01")
 

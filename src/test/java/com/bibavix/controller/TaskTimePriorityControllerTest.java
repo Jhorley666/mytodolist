@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,12 +44,13 @@ class TaskTimePriorityControllerTest {
     @Test
     void shouldReturnNotNullTaskTimePriorityWhenFindById() {
         // Arrange
-        int id = 1;
+        UUID id = UUID.randomUUID();
         String username = "test";
         // Act
         when(taskTimePriorityService.getTaskTimePriorityById(id, username)).thenReturn(taskTimePriorityDTO);
         when(userDetails.getUsername()).thenReturn(username);
-        ResponseEntity<TaskTimePriorityDTO> response = taskTimePriorityController.getTaskTimePriorityById(id, userDetails);
+        ResponseEntity<TaskTimePriorityDTO> response = taskTimePriorityController.getTaskTimePriorityById(id,
+                userDetails);
 
         // Asserts
         assertNotNull(response);
@@ -62,12 +64,13 @@ class TaskTimePriorityControllerTest {
         // Arrange
         TaskTimePriorityDTO inputDTO = new TaskTimePriorityDTO();
         inputDTO.setTime(1000L);
-        inputDTO.setPriorityId(10);
+        inputDTO.setPriorityId(UUID.randomUUID());
 
         // Act
         when(taskTimePriorityService.createTaskTimePriority(inputDTO, "username")).thenReturn(taskTimePriorityDTO);
         when(userDetails.getUsername()).thenReturn("username");
-        ResponseEntity<TaskTimePriorityDTO> response = taskTimePriorityController.createTaskTimePriority(inputDTO, userDetails);
+        ResponseEntity<TaskTimePriorityDTO> response = taskTimePriorityController.createTaskTimePriority(inputDTO,
+                userDetails);
 
         // Asserts
         assertNotNull(response);
@@ -95,10 +98,11 @@ class TaskTimePriorityControllerTest {
     @Test
     void shouldReturnNotNullTaskTimePriorityWhenGetByPriorityId() {
         // Arrange
-        int priorityId = 10;
+        UUID priorityId = UUID.randomUUID();
         String username = "test";
         // Act
-        when(taskTimePriorityService.getTaskTimePriorityByPriorityId(priorityId, username)).thenReturn(taskTimePriorityDTO);
+        when(taskTimePriorityService.getTaskTimePriorityByPriorityId(priorityId, username))
+                .thenReturn(taskTimePriorityDTO);
         when(userDetails.getUsername()).thenReturn(username);
         ResponseEntity<TaskTimePriorityDTO> response = taskTimePriorityController
                 .getTaskTimePriorityByPriorityId(priorityId, userDetails);
@@ -113,17 +117,18 @@ class TaskTimePriorityControllerTest {
     @Test
     void shouldReturnNotNullTaskTimePriorityWhenUpdateTaskTimePriority() {
         // Arrange
-        int id = 1;
+        UUID id = UUID.randomUUID();
         String username = "test";
         TaskTimePriorityDTO inputDTO = new TaskTimePriorityDTO();
         inputDTO.setTime(1000L);
-        inputDTO.setPriorityId(15);
+        inputDTO.setPriorityId(UUID.randomUUID());
 
         // Act
         when(userDetails.getUsername()).thenReturn("test");
         when(taskTimePriorityService.updateTaskTimePriority(inputDTO, "test"))
                 .thenReturn(taskTimePriorityDTO);
-        ResponseEntity<TaskTimePriorityDTO> response = taskTimePriorityController.updateTaskTimePriority(id, inputDTO, userDetails);
+        ResponseEntity<TaskTimePriorityDTO> response = taskTimePriorityController.updateTaskTimePriority(id, inputDTO,
+                userDetails);
 
         // Asserts
         assertNotNull(response);
@@ -135,7 +140,7 @@ class TaskTimePriorityControllerTest {
     @Test
     void shouldReturnOkWhenDeleteTaskTimePriority() {
         // Arrange
-        int id = 1;
+        UUID id = UUID.randomUUID();
 
         // Act
         ResponseEntity<?> response = taskTimePriorityController.deleteTaskTimePriority(id, userDetails);

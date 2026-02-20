@@ -27,6 +27,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.UUID;
+
 @ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
 class AuthServiceImplTest {
 
@@ -51,7 +53,8 @@ class AuthServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        Mockito.reset(authenticationManager, jwtUtils, userDetailsService, userRepository, roleRepository, passwordEncoder, authentication);
+        Mockito.reset(authenticationManager, jwtUtils, userDetailsService, userRepository, roleRepository,
+                passwordEncoder, authentication);
     }
 
     @Test
@@ -60,9 +63,11 @@ class AuthServiceImplTest {
         loginRequest.setUsername("alice");
         loginRequest.setPassword("password");
 
-        UserDetailsImpl userDetails = new UserDetailsImpl("alice", "password", Collections.singletonList((GrantedAuthority) () -> "ROLE_USER"));
+        UserDetailsImpl userDetails = new UserDetailsImpl("alice", "password",
+                Collections.singletonList((GrantedAuthority) () -> "ROLE_USER"));
 
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(userDetails);
         when(jwtUtils.generateJwtToken(authentication)).thenReturn("jwt-token");
 
@@ -85,7 +90,7 @@ class AuthServiceImplTest {
         when(passwordEncoder.encode("pw")).thenReturn("hashedpw");
 
         Role role = new Role();
-        role.setRoleId(1);
+        role.setRoleId(UUID.randomUUID());
         role.setName("ROLE_USER");
         when(roleRepository.findByName("ROLE_USER")).thenReturn(Optional.of(role));
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));

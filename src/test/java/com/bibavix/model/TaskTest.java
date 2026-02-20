@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,27 +13,33 @@ class TaskTest {
 
     @Test
     void testTaskFieldsAndGettersSetters() {
+        UUID taskId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        UUID categoryId = UUID.randomUUID();
+        UUID statusId = UUID.randomUUID();
+        UUID priorityId = UUID.randomUUID();
+
         Task task = new Task();
-        task.setTaskId(1);
-        task.setUserId(2);
-        task.setCategoryId(3);
-        task.setStatusId((short) 1);
+        task.setTaskId(taskId);
+        task.setUserId(userId);
+        task.setCategoryId(categoryId);
+        task.setStatusId(statusId);
         task.setTitle("Test Title");
         task.setDescription("Test Description");
-        task.setPriorityId(3);
+        task.setPriorityId(priorityId);
         LocalDate dueDate = LocalDate.of(2025, 7, 18);
         task.setDueDate(dueDate);
         LocalDateTime now = LocalDateTime.now();
         task.setCreatedAt(now);
         task.setUpdatedAt(now);
 
-        assertEquals(1, task.getTaskId());
-        assertEquals(2, task.getUserId());
-        assertEquals(3, task.getCategoryId());
-        assertEquals((short) 1, Optional.ofNullable(task.getStatusId()).get());
+        assertEquals(taskId, task.getTaskId());
+        assertEquals(userId, task.getUserId());
+        assertEquals(categoryId, task.getCategoryId());
+        assertEquals(statusId, Optional.ofNullable(task.getStatusId()).get());
         assertEquals("Test Title", task.getTitle());
         assertEquals("Test Description", task.getDescription());
-        assertEquals(3, task.getPriorityId());
+        assertEquals(priorityId, task.getPriorityId());
         assertEquals(dueDate, task.getDueDate());
         assertEquals(now, task.getCreatedAt());
         assertEquals(now, task.getUpdatedAt());
@@ -61,7 +68,7 @@ class TaskTest {
     @Test
     void testToStringDoesNotThrow() {
         Task task = new Task();
-        task.setTaskId(1);
+        task.setTaskId(UUID.randomUUID());
         task.setTitle("Sample");
         assertDoesNotThrow(task::toString);
     }

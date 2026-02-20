@@ -4,9 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.JdbcTypeCode;
 
+import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -15,18 +18,19 @@ import java.time.LocalDateTime;
 @Table(name = "tasks", catalog = "todo_list", schema = "todo_list")
 public class Task {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "task_id", columnDefinition = "INT UNSIGNED")
-    private Integer taskId;
+    @GeneratedValue
+    @Column(name = "task_id", columnDefinition = "BINARY(16)", updatable = false, nullable = false)
+    @JdbcTypeCode(Types.BINARY)
+    private UUID taskId;
 
-    @Column(name = "user_id", nullable = false, columnDefinition = "INT UNSIGNED")
-    private Integer userId;
+    @Column(name = "user_id", nullable = false, columnDefinition = "BINARY(16)")
+    private UUID userId;
 
-    @Column(name = "category_id", columnDefinition = "INT UNSIGNED")
-    private Integer categoryId;
+    @Column(name = "category_id", columnDefinition = "BINARY(16)")
+    private UUID categoryId;
 
-    @Column(name = "status_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
-    private Short statusId;
+    @Column(name = "status_id", nullable = false, columnDefinition = "BINARY(16)")
+    private UUID statusId;
 
     @Column(name = "title", nullable = false, length = 100)
     private String title;
@@ -35,7 +39,7 @@ public class Task {
     private String description;
 
     @Column(name = "priority_id", nullable = false)
-    private Integer priorityId;
+    private UUID priorityId;
 
     @Column(name = "due_date")
     private LocalDate dueDate;

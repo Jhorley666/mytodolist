@@ -23,6 +23,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.UUID;
+
 class TaskControllerTest {
 
     @Mock
@@ -42,58 +44,63 @@ class TaskControllerTest {
 
     private User user;
     private Task task;
+    private UUID userId;
+    private UUID taskId;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        userId = UUID.randomUUID();
+        taskId = UUID.randomUUID();
+
         user = new User();
-        user.setUserId(1);
+        user.setUserId(userId);
         user.setUsername("testuser");
 
         task = new Task();
-        task.setTaskId(100);
-        task.setUserId(1);
+        task.setTaskId(taskId);
+        task.setUserId(userId);
         task.setTitle("Test Task");
         task.setDescription("Test Description");
-        task.setStatusId((short) 1);
+        task.setStatusId(UUID.randomUUID());
     }
 
     @Test
     void getAllTasks_ReturnsTasksForAuthenticatedUser() {
+        UUID tId1 = UUID.randomUUID();
+        UUID tId2 = UUID.randomUUID();
         List<TaskDTO> tasks = Arrays.asList(
                 new TaskDTO("test",
                         "test to test",
-                        1,
-                        1, 1,
-                        1, 1, "2024-04-02", "2024-04-02", "2024-04-02"),
+                        UUID.randomUUID(), tId1,
+                        UUID.randomUUID(), UUID.randomUUID(),
+                        UUID.randomUUID(), "2024-04-02", "2024-04-02", "2024-04-02"),
                 new TaskDTO("test",
                         "test to test",
-                        3,
-                        2, 2,
-                        2, 2, "2024-04-02", "2024-04-02", "2024-04-02")
-        );
+                        UUID.randomUUID(), tId2,
+                        UUID.randomUUID(), UUID.randomUUID(),
+                        UUID.randomUUID(), "2024-04-02", "2024-04-02", "2024-04-02"));
         when(taskService.getAllTasksByUser(userDetails.getUsername())).thenReturn(tasks);
 
         ResponseEntity<List<TaskDTO>> response = taskController.getAllTasks(userDetails);
 
         assertEquals(200, response.getStatusCodeValue());
         assertEquals(2, response.getBody().size());
-        assertEquals(1, response.getBody().get(0).getTaskId());
+        assertEquals(tId1, response.getBody().get(0).getTaskId());
         verify(taskService, times(1)).getAllTasksByUser(userDetails.getUsername());
     }
 
     @Test
     void getTaskById_ReturnsTaskIfOwnedByUser() {
-        when(taskService.findTaskById(100)).thenReturn(task);
-        ResponseEntity<Task> response = taskController.getTaskById(100, userDetails);
+        when(taskService.findTaskById(taskId)).thenReturn(task);
+        ResponseEntity<Task> response = taskController.getTaskById(taskId, userDetails);
         assertEquals(200, response.getStatusCodeValue());
         assertEquals(task.getTaskId(), response.getBody().getTaskId());
     }
 
-
     void getTaskById_ReturnsForbiddenIfNotOwnedByUser() {
 
-        ResponseEntity<Task> response = taskController.getTaskById(100, userDetails);
+        ResponseEntity<Task> response = taskController.getTaskById(taskId, userDetails);
 
         assertEquals(403, response.getStatusCodeValue());
         assertNull(response.getBody());
@@ -105,7 +112,7 @@ class TaskControllerTest {
         TaskDTO newTask = new TaskDTO();
         newTask.setTitle("New Task");
         newTask.setDescription("New Description");
-        newTask.setStatusId(1);
+        newTask.setStatusId(UUID.randomUUID());
 
         when(taskService.createTask(newTask, userDetails.getUsername())).thenReturn(task);
 
@@ -119,38 +126,37 @@ class TaskControllerTest {
     void updateTask_UpdatesTaskIfOwnedByUser() {
 
         TaskDTO taskToUpdate = new TaskDTO();
-        taskToUpdate.setTaskId(1);
+        taskToUpdate.setTaskId(taskId);
         taskToUpdate.setTitle("Updated Title");
         taskToUpdate.setDescription("Updated Description");
-        taskToUpdate.setStatusId(2);
+        taskToUpdate.setStatusId(UUID.randomUUID());
 
         TaskDTO updatedTask = new TaskDTO();
-        updatedTask.setTaskId(1);
+        updatedTask.setTaskId(taskId);
         updatedTask.setTitle("Updated Title");
         updatedTask.setDescription("Updated Description");
-        updatedTask.setStatusId(2);
+        updatedTask.setStatusId(taskToUpdate.getStatusId());
 
-        when(taskService.updateTask(1, taskToUpdate, userDetails.getUsername())).thenReturn(updatedTask);
+        when(taskService.updateTask(taskId, taskToUpdate, userDetails.getUsername())).thenReturn(updatedTask);
 
-
-        ResponseEntity<TaskDTO> response = taskController.updateTask(1, taskToUpdate, userDetails);
+        ResponseEntity<TaskDTO> response = taskController.updateTask(taskId, taskToUpdate, userDetails);
 
         assertEquals(200, response.getStatusCodeValue());
         assertEquals("Updated Title", response.getBody().getTitle());
         assertEquals("Updated Description", response.getBody().getDescription());
-        assertEquals((short) 2, Optional.ofNullable(response.getBody().getStatusId()).get());
+        assertEquals(taskToUpdate.getStatusId(), response.getBody().getStatusId());
     }
 
     void updateTask_ReturnsForbiddenIfNotOwnedByUser() {
-        task.setUserId(2); // Not owned by user
+        task.setUserId(UUID.randomUUID()); // Not owned by user
         when(userDetails.getUsername()).thenReturn("testuser");
         when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
-        when(taskRepository.findById(100)).thenReturn(Optional.of(task));
+        when(taskRepository.findById(taskId)).thenReturn(Optional.of(task));
 
         TaskDTO updatedTask = new TaskDTO();
         updatedTask.setTitle("Updated Title");
 
-        ResponseEntity<TaskDTO> response = taskController.updateTask(100, updatedTask, userDetails);
+        ResponseEntity<TaskDTO> response = taskController.updateTask(taskId, updatedTask, userDetails);
 
         assertEquals(403, response.getStatusCodeValue());
         assertNull(response.getBody());
@@ -159,15 +165,15 @@ class TaskControllerTest {
     @Test
     void deleteTask_DeletesTaskIfOwnedByUser() {
 
-        ResponseEntity<?> response = taskController.deleteTask(100, userDetails);
+        ResponseEntity<?> response = taskController.deleteTask(taskId, userDetails);
 
         assertEquals(200, response.getStatusCodeValue());
-        verify(taskService).deleteTask(100, userDetails.getUsername());
+        verify(taskService).deleteTask(taskId, userDetails.getUsername());
     }
 
     void deleteTask_ReturnsForbiddenIfNotOwnedByUser() {
 
-        ResponseEntity<?> response = taskController.deleteTask(100, userDetails);
+        ResponseEntity<?> response = taskController.deleteTask(taskId, userDetails);
 
         assertEquals(403, response.getStatusCodeValue());
         verify(taskRepository, never()).delete(task);
@@ -185,10 +191,10 @@ class TaskControllerTest {
 
     @Test
     void getTaskById_ReturnsTaskNotFound() {
-        when(taskService.findTaskById(100))
+        when(taskService.findTaskById(taskId))
                 .thenThrow(new ResourceNotFoundException("Task with id 100 not found"));
         Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
-            taskController.getTaskById(100, userDetails);
+            taskController.getTaskById(taskId, userDetails);
         });
         assertEquals("Task with id 100 not found", exception.getMessage());
     }

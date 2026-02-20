@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,21 +12,23 @@ class UserTest {
 
     @Test
     void testUserFieldsAndGettersSetters() {
+        UUID userId = UUID.randomUUID();
         User user = new User();
-        user.setUserId(1);
+        user.setUserId(userId);
         user.setUsername("alice");
         user.setEmail("alice@example.com");
         user.setPassword("secret");
         user.setEnabled(true);
 
+        UUID roleId = UUID.randomUUID();
         Role role = new Role();
-        role.setRoleId(2);
+        role.setRoleId(roleId);
         role.setName("ROLE_USER");
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         user.setRoles(roles);
 
-        assertEquals(1, user.getUserId());
+        assertEquals(userId, user.getUserId());
         assertEquals("alice", user.getUsername());
         assertEquals("alice@example.com", user.getEmail());
         assertEquals("secret", user.getPassword());
@@ -50,7 +53,7 @@ class UserTest {
     @Test
     void testToStringDoesNotThrow() {
         User user = new User();
-        user.setUserId(1);
+        user.setUserId(UUID.randomUUID());
         user.setUsername("bob");
         assertDoesNotThrow(user::toString);
     }

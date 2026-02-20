@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
@@ -54,14 +55,13 @@ class TaskStatusControllerTest {
 
     @Test
     void shouldReturnAllTaskStatus() throws Exception {
-        List<TaskStatusDTO> taskStatusDTOList =
-                Arrays.asList(
-                    new TaskStatusDTO(1, "Done"),
-                    new TaskStatusDTO(2, "In progress")
-                );
+        List<TaskStatusDTO> taskStatusDTOList = Arrays.asList(
+                new TaskStatusDTO(UUID.randomUUID(), "Done"),
+                new TaskStatusDTO(UUID.randomUUID(), "In progress"));
         when(taskStatusService.getAllTaskStatus()).thenReturn(taskStatusDTOList);
 
-        mockMvc.perform(get("/v1/status").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwtToken))
+        mockMvc.perform(
+                get("/v1/status").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].name").value("Done"))

@@ -17,83 +17,80 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Tag(name = "Categories", description = "Categories management APIs")
 @RestController
 @RequestMapping("/v1/categories")
 @RequiredArgsConstructor
 public class CategoryController {
-    public static final String USER_NOT_FOUND = "User not found";
-    public static final String TASK_NOT_FOUND = "Category not found";
-    private final CategoryService categoryService;
-    private final UserRepository userRepository;
+        public static final String USER_NOT_FOUND = "User not found";
+        public static final String TASK_NOT_FOUND = "Category not found";
+        private final CategoryService categoryService;
+        private final UserRepository userRepository;
 
-    @PostMapping
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<CategoryDTO> createCategory(
-            @RequestBody CategoryDTO categoryDTO,
-            @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails
-    ) {
-        User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
-        Integer categoryId = categoryService.addCategory(categoryDTO, user.getUserId());
-        return ResponseEntity.ok(categoryService.getCategoryById(categoryId));
-    }
+        @PostMapping
+        @PreAuthorize("hasRole('USER')")
+        public ResponseEntity<CategoryDTO> createCategory(
+                        @RequestBody CategoryDTO categoryDTO,
+                        @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
+                User user = userRepository.findByUsername(userDetails.getUsername())
+                                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
+                UUID categoryId = categoryService.addCategory(categoryDTO, user.getUserId());
+                return ResponseEntity.ok(categoryService.getCategoryById(categoryId));
+        }
 
+        @PutMapping("/{id}")
+        @PreAuthorize("hasRole('USER')")
+        public ResponseEntity<CategoryDTO> updateCategory(
+                        @Parameter(description = "Category ID", required = true) @PathVariable UUID id,
+                        @Parameter(description = "Category task", required = true, schema = @Schema(implementation = Category.class)) @RequestBody CategoryDTO category,
+                        @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
+                User user = userRepository.findByUsername(userDetails.getUsername())
+                                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
+                CategoryDTO categoryDTO = new CategoryDTO();
+                categoryDTO.setCategoryId(id);
+                categoryDTO.setUserId(user.getUserId());
+                categoryDTO.setName(category.getName());
+                CategoryDTO taskToUpdate = categoryService.updateCategory(categoryDTO);
+                return ResponseEntity.ok(taskToUpdate);
+        }
 
+        @GetMapping
+        @PreAuthorize("hasRole('USER')")
+        public ResponseEntity<List<CategoryDTO>> getAllCategoriesByUserId(
+                        @AuthenticationPrincipal UserDetails userDetails) {
+                User user = userRepository.findByUsername(userDetails.getUsername())
+                                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
+                List<CategoryDTO> categoryDTOS = categoryService.getAllCategoriesByUserId(user.getUserId());
+                return ResponseEntity.ok(categoryDTOS);
+        }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<CategoryDTO> updateCategory(
-            @Parameter(description = "Category ID", required = true) @PathVariable Integer id,
-            @Parameter(description = "Category task", required = true, schema = @Schema(implementation = Category.class))
-            @RequestBody CategoryDTO category,
-            @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
-        User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
-        CategoryDTO categoryDTO = new CategoryDTO();
-        categoryDTO.setCategoryId(id);
-        categoryDTO.setUserId(user.getUserId());
-        categoryDTO.setName(category.getName());
-        CategoryDTO taskToUpdate = categoryService.updateCategory(categoryDTO);
-        return ResponseEntity.ok(taskToUpdate);
-    }
+        @DeleteMapping("/{id}")
+        @PreAuthorize("hasRole('USER')")
+        public ResponseEntity<ResponseCode> deleteCategory(
+                        @Parameter(description = "Category ID", required = true) @PathVariable UUID id,
+                        @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
+                User user = userRepository.findByUsername(userDetails.getUsername())
+                                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
+                CategoryDTO categoryDTO = new CategoryDTO();
+                categoryDTO.setCategoryId(id);
+                categoryDTO.setUserId(user.getUserId());
+                categoryService.deleteCategory(categoryDTO);
+                return ResponseEntity.ok().build();
+        }
 
-
-    @GetMapping
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<List<CategoryDTO>> getAllCategoriesByUserId(
-            @AuthenticationPrincipal UserDetails userDetails
-    ) {
-        User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
-        List<CategoryDTO> categoryDTOS = categoryService.getAllCategoriesByUserId(user.getUserId());
-        return ResponseEntity.ok(categoryDTOS);
-    }
-
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<ResponseCode> deleteCategory(@Parameter(description = "Category ID", required = true) @PathVariable Integer id,
-                                                       @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
-        User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
-        CategoryDTO categoryDTO = new CategoryDTO();
-        categoryDTO.setCategoryId(id);
-        categoryDTO.setUserId(user.getUserId());
-        categoryService.deleteCategory(categoryDTO);
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<CategoryDTO> getCategoryById(@Parameter(description = "Category ID", required = true) @PathVariable Integer id,
-                                                       @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
-        User user  = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
-        CategoryDTO categoryDTO = new CategoryDTO();
-        categoryDTO.setCategoryId(id);
-        categoryDTO.setUserId(user.getUserId());
-        CategoryDTO category = categoryService.getCategoryById(id);
-        return ResponseEntity.ok(category);
-    }
+        @GetMapping("/{id}")
+        @PreAuthorize("hasRole('USER')")
+        public ResponseEntity<CategoryDTO> getCategoryById(
+                        @Parameter(description = "Category ID", required = true) @PathVariable UUID id,
+                        @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
+                User user = userRepository.findByUsername(userDetails.getUsername())
+                                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
+                CategoryDTO categoryDTO = new CategoryDTO();
+                categoryDTO.setCategoryId(id);
+                categoryDTO.setUserId(user.getUserId());
+                CategoryDTO category = categoryService.getCategoryById(id);
+                return ResponseEntity.ok(category);
+        }
 }

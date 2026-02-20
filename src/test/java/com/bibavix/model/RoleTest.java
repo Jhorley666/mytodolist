@@ -3,16 +3,18 @@ package com.bibavix.model;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.UUID;
 
 class RoleTest {
 
     @Test
     void testRoleFieldsAndGettersSetters() {
+        UUID roleId = UUID.randomUUID();
         Role role = new Role();
-        role.setRoleId(1);
+        role.setRoleId(roleId);
         role.setName("ROLE_USER");
 
-        assertEquals(1, role.getRoleId());
+        assertEquals(roleId, role.getRoleId());
         assertEquals("ROLE_USER", role.getName());
     }
 
@@ -25,8 +27,9 @@ class RoleTest {
 
     @Test
     void testToStringDoesNotThrow() {
+        UUID roleId = UUID.randomUUID();
         Role role = new Role();
-        role.setRoleId(2);
+        role.setRoleId(roleId);
         role.setName("ROLE_ADMIN");
         assertDoesNotThrow(role::toString);
     }

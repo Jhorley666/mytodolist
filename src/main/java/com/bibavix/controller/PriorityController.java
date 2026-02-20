@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Tag(name = "Priorities", description = "Priorities management APIs")
 @RestController
@@ -25,9 +26,7 @@ public class PriorityController {
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<PriorityDTO> createPriority(
-            @Parameter(description = "Priority data", required = true, schema = @Schema(implementation = Priority.class))
-            @RequestBody PriorityDTO priorityDTO
-    ) {
+            @Parameter(description = "Priority data", required = true, schema = @Schema(implementation = Priority.class)) @RequestBody PriorityDTO priorityDTO) {
         PriorityDTO createdPriority = priorityService.createPriority(priorityDTO);
         return ResponseEntity.ok(createdPriority);
     }
@@ -42,8 +41,7 @@ public class PriorityController {
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<PriorityDTO> getPriorityById(
-            @Parameter(description = "Priority ID", required = true) @PathVariable Integer id
-    ) {
+            @Parameter(description = "Priority ID", required = true) @PathVariable UUID id) {
         PriorityDTO priority = priorityService.getPriorityById(id);
         return ResponseEntity.ok(priority);
     }
@@ -51,10 +49,8 @@ public class PriorityController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<PriorityDTO> updatePriority(
-            @Parameter(description = "Priority ID", required = true) @PathVariable Integer id,
-            @Parameter(description = "Priority data", required = true, schema = @Schema(implementation = Priority.class))
-            @RequestBody PriorityDTO priorityDTO
-    ) {
+            @Parameter(description = "Priority ID", required = true) @PathVariable UUID id,
+            @Parameter(description = "Priority data", required = true, schema = @Schema(implementation = Priority.class)) @RequestBody PriorityDTO priorityDTO) {
         priorityDTO.setPriorityId(id);
         PriorityDTO updatedPriority = priorityService.updatePriority(priorityDTO);
         return ResponseEntity.ok(updatedPriority);
@@ -63,10 +59,8 @@ public class PriorityController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ResponseCode> deletePriority(
-            @Parameter(description = "Priority ID", required = true) @PathVariable Integer id
-    ) {
+            @Parameter(description = "Priority ID", required = true) @PathVariable UUID id) {
         priorityService.deletePriority(id);
         return ResponseEntity.ok().build();
     }
 }
-

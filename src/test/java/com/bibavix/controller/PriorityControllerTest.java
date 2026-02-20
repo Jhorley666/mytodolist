@@ -16,6 +16,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.util.UUID;
+
 @ExtendWith(MockitoExtension.class)
 class PriorityControllerTest {
     @InjectMocks
@@ -29,14 +31,14 @@ class PriorityControllerTest {
 
     @Test
     void shouldReturnNotNullPriorityWhenFindById() {
-        //Arrange
-        int id = 1;
+        // Arrange
+        UUID id = UUID.randomUUID();
 
-        //Act
+        // Act
         when(priorityService.getPriorityById(id)).thenReturn(priorityDTO);
         ResponseEntity<PriorityDTO> response = priorityController.getPriorityById(id);
 
-        //Asserts
+        // Asserts
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -45,15 +47,15 @@ class PriorityControllerTest {
 
     @Test
     void shouldReturnNotNullPriorityWhenCreatePriority() {
-        //Arrange
+        // Arrange
         PriorityDTO inputDTO = new PriorityDTO();
         inputDTO.setPriorityName("High");
 
-        //Act
+        // Act
         when(priorityService.createPriority(inputDTO)).thenReturn(priorityDTO);
         ResponseEntity<PriorityDTO> response = priorityController.createPriority(inputDTO);
 
-        //Asserts
+        // Asserts
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -62,14 +64,14 @@ class PriorityControllerTest {
 
     @Test
     void shouldReturnNotNullListWhenGetAllPriorities() {
-        //Arrange
+        // Arrange
         List<PriorityDTO> priorityList = List.of(priorityDTO);
 
-        //Act
+        // Act
         when(priorityService.getAllPriorities()).thenReturn(priorityList);
         ResponseEntity<List<PriorityDTO>> response = priorityController.getAllPriorities();
 
-        //Asserts
+        // Asserts
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -78,16 +80,16 @@ class PriorityControllerTest {
 
     @Test
     void shouldReturnNotNullPriorityWhenUpdatePriority() {
-        //Arrange
-        int id = 1;
+        // Arrange
+        UUID id = UUID.randomUUID();
         PriorityDTO inputDTO = new PriorityDTO();
         inputDTO.setPriorityName("Medium");
 
-        //Act
+        // Act
         when(priorityService.updatePriority(any(PriorityDTO.class))).thenReturn(priorityDTO);
         ResponseEntity<PriorityDTO> response = priorityController.updatePriority(id, inputDTO);
 
-        //Asserts
+        // Asserts
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -96,15 +98,14 @@ class PriorityControllerTest {
 
     @Test
     void shouldReturnOkWhenDeletePriority() {
-        //Arrange
-        int id = 1;
+        // Arrange
+        UUID id = UUID.randomUUID();
 
-        //Act
+        // Act
         ResponseEntity<?> response = priorityController.deletePriority(id);
 
-        //Asserts
+        // Asserts
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }
-

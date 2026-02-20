@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+
+import java.sql.Types;
+import java.util.UUID;
 
 @Entity
 @Table(name = "task_status", catalog = "todo_list", schema = "todo_list")
@@ -14,9 +18,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TaskStatus {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "status_id")
-    private Integer statusId;
+    @GeneratedValue
+    @Column(name = "status_id", columnDefinition = "BINARY(16)", updatable = false, nullable = false)
+    @JdbcTypeCode(Types.BINARY)
+    private UUID statusId;
 
     @Column(name = "name", nullable = false, length = 50)
     private String name;

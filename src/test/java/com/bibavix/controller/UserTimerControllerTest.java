@@ -15,6 +15,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+import java.util.UUID;
+
 class UserTimerControllerTest {
 
     @Mock
@@ -38,7 +40,7 @@ class UserTimerControllerTest {
     void getTimerStatus_ReturnsStatusForAuthenticatedUser() {
         // Arrange
         String username = "testuser";
-        Integer userId = 1;
+        UUID userId = UUID.randomUUID();
 
         User user = new User();
         user.setUserId(userId);

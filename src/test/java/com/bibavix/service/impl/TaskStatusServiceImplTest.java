@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -30,10 +31,13 @@ class TaskStatusServiceImplTest {
     @Mock
     TaskStatusMapper taskStatusMapper;
 
+    private final UUID statusId1 = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private final UUID statusId2 = UUID.fromString("00000000-0000-0000-0000-000000000002");
+
     @Test
-    void shouldReturnTaskStatusDTOWhenCreateStatusTask(){
-        TaskStatus taskStatus = new TaskStatus(1, "Done");
-        TaskStatusDTO taskStatusDTO = new TaskStatusDTO(1, "Done");
+    void shouldReturnTaskStatusDTOWhenCreateStatusTask() {
+        TaskStatus taskStatus = new TaskStatus(statusId1, "Done");
+        TaskStatusDTO taskStatusDTO = new TaskStatusDTO(statusId1, "Done");
         when(taskStatusMapper.toEntity(taskStatusDTO)).thenReturn(taskStatus);
         when(taskStatusRepository.save(taskStatus)).thenReturn(taskStatus);
         when(taskStatusMapper.toDTO(taskStatus)).thenReturn(taskStatusDTO);
@@ -47,8 +51,8 @@ class TaskStatusServiceImplTest {
     @Test
     void shouldReturnTaskStatusListWhenGetAllTaskStatus() {
         List<TaskStatus> taskStatusList = List
-                .of(new TaskStatus(1, "Done"),
-                    new TaskStatus(2, "In progress"));
+                .of(new TaskStatus(statusId1, "Done"),
+                        new TaskStatus(statusId2, "In progress"));
         when(taskStatusRepository.findAll()).thenReturn(taskStatusList);
         List<TaskStatusDTO> taskStatusDTOS = taskStatusService.getAllTaskStatus();
         Assertions.assertNotNull(taskStatusDTOS);
@@ -59,33 +63,33 @@ class TaskStatusServiceImplTest {
 
     @Test
     void shouldReturnTaskStatusWhenGetTaskStatusById() {
-        TaskStatus taskStatus = new TaskStatus(1, "Done");
-        TaskStatusDTO taskStatusDTO = new TaskStatusDTO(1, "Done");
-        when(taskStatusRepository.findById(1)).thenReturn(Optional.of(taskStatus));
+        TaskStatus taskStatus = new TaskStatus(statusId1, "Done");
+        TaskStatusDTO taskStatusDTO = new TaskStatusDTO(statusId1, "Done");
+        when(taskStatusRepository.findById(statusId1)).thenReturn(Optional.of(taskStatus));
         when(taskStatusMapper.toDTO(taskStatus)).thenReturn(taskStatusDTO);
-        TaskStatusDTO taskStatusDTOFound = taskStatusService.getTaskStatusById(1);
+        TaskStatusDTO taskStatusDTOFound = taskStatusService.getTaskStatusById(statusId1);
         Assertions.assertNotNull(taskStatusDTOFound);
         Assertions.assertEquals("Done", taskStatusDTOFound.getName());
-        verify(taskStatusRepository, times(1)).findById(1);
+        verify(taskStatusRepository, times(1)).findById(statusId1);
     }
 
     @Test
     void shouldThrowTaskStatusNotFoundExceptionWhenGetTaskStatusById() {
-        when(taskStatusRepository.findById(1)).thenThrow(new ResourceNotFoundException("Task status with id " + 1 + " not found."));
-        Assertions.assertThrows(ResourceNotFoundException.class,() ->
-                taskStatusService.getTaskStatusById(1));
+        when(taskStatusRepository.findById(statusId1))
+                .thenThrow(new ResourceNotFoundException("Task status with id " + statusId1 + " not found."));
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> taskStatusService.getTaskStatusById(statusId1));
     }
 
     @Test
-    void verifyDeleteTaskStatus(){
-        TaskStatus taskStatus = new TaskStatus(1, "Done");
-        TaskStatusDTO taskStatusDTO = new TaskStatusDTO(1, "Done");
-        when(taskStatusRepository.findById(1)).thenReturn(Optional.of(taskStatus));
+    void verifyDeleteTaskStatus() {
+        TaskStatus taskStatus = new TaskStatus(statusId1, "Done");
+        TaskStatusDTO taskStatusDTO = new TaskStatusDTO(statusId1, "Done");
+        when(taskStatusRepository.findById(statusId1)).thenReturn(Optional.of(taskStatus));
         when(taskStatusMapper.toDTO(taskStatus)).thenReturn(taskStatusDTO);
 
-        taskStatusService.deleteTaskStatus(1);
-        verify(taskStatusRepository, times(1)).deleteById(1);
-        verify(taskStatusRepository, times(1)).findById(1);
+        taskStatusService.deleteTaskStatus(statusId1);
+        verify(taskStatusRepository, times(1)).deleteById(statusId1);
+        verify(taskStatusRepository, times(1)).findById(statusId1);
     }
 
 }

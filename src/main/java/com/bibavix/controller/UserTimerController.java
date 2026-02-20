@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Tag(name = "UserTimers", description = "User Timer management APIs")
 @RestController
@@ -70,7 +71,7 @@ public class UserTimerController {
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<UserTimerDTO> getUserTimerById(
-            @Parameter(description = "UserTimer ID", required = true) @PathVariable Integer id) {
+            @Parameter(description = "UserTimer ID", required = true) @PathVariable UUID id) {
         UserTimerDTO userTimer = userTimerService.getUserTimerById(id);
         return ResponseEntity.ok(userTimer);
     }
@@ -78,7 +79,7 @@ public class UserTimerController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<UserTimerDTO> updateUserTimer(
-            @Parameter(description = "UserTimer ID", required = true) @PathVariable Integer id,
+            @Parameter(description = "UserTimer ID", required = true) @PathVariable UUID id,
             @Parameter(description = "UserTimer data", required = true, schema = @Schema(implementation = UserTimer.class)) @RequestBody UserTimerDTO userTimerDTO) {
         userTimerDTO.setIdUserTimer(id);
         UserTimerDTO updatedUserTimer = userTimerService.updateUserTimer(userTimerDTO);
@@ -88,7 +89,7 @@ public class UserTimerController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ResponseCode> deleteUserTimer(
-            @Parameter(description = "UserTimer ID", required = true) @PathVariable Integer id) {
+            @Parameter(description = "UserTimer ID", required = true) @PathVariable UUID id) {
         userTimerService.deleteUserTimerById(id);
         return ResponseEntity.ok().build();
     }

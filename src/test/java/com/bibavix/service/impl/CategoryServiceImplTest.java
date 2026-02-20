@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -30,16 +31,21 @@ class CategoryServiceImplTest {
     private CategoryDTO categoryDTO;
     private Category category;
 
+    private final UUID categoryId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private final UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000002");
+    private final UUID diffCategoryId = UUID.fromString("00000000-0000-0000-0000-000000000099");
+    private final UUID diffUserId = UUID.fromString("00000000-0000-0000-0000-000000000099");
+
     @BeforeEach
     void setUp() {
         categoryDTO = new CategoryDTO();
-        categoryDTO.setCategoryId(1);
-        categoryDTO.setUserId(2);
+        categoryDTO.setCategoryId(categoryId);
+        categoryDTO.setUserId(userId);
         categoryDTO.setName("Work");
 
         category = new Category();
-        category.setCategoryId(1);
-        category.setUserId(2);
+        category.setCategoryId(categoryId);
+        category.setUserId(userId);
         category.setName("Work");
     }
 
@@ -48,18 +54,18 @@ class CategoryServiceImplTest {
         when(categoryMapper.toEntity(categoryDTO)).thenReturn(category);
         when(categoryRepository.save(any(Category.class))).thenReturn(category);
 
-        Integer result = categoryService.addCategory(categoryDTO, 2);
+        UUID result = categoryService.addCategory(categoryDTO, userId);
 
-        assertEquals(1, result);
+        assertEquals(categoryId, result);
         verify(categoryRepository).save(any(Category.class));
     }
 
     @Test
     void getAllCategoriesByUserId_shouldReturnMappedList() {
-        when(categoryRepository.findAllByUserId(2)).thenReturn(List.of(category));
+        when(categoryRepository.findAllByUserId(userId)).thenReturn(List.of(category));
         when(categoryMapper.toDTO(category)).thenReturn(categoryDTO);
 
-        List<CategoryDTO> result = categoryService.getAllCategoriesByUserId(2);
+        List<CategoryDTO> result = categoryService.getAllCategoriesByUserId(userId);
 
         assertEquals(1, result.size());
         assertEquals(categoryDTO, result.get(0));
@@ -67,8 +73,8 @@ class CategoryServiceImplTest {
 
     @Test
     void updateCategory_shouldUpdateAndReturnDTO() {
-        when(categoryRepository.existsById(1)).thenReturn(true);
-        when(categoryRepository.findById(1)).thenReturn(Optional.of(category));
+        when(categoryRepository.existsById(categoryId)).thenReturn(true);
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
         when(categoryMapper.toDTO(category)).thenReturn(categoryDTO);
         when(categoryRepository.save(category)).thenReturn(category);
 
@@ -81,54 +87,54 @@ class CategoryServiceImplTest {
 
     @Test
     void updateCategory_shouldThrowIfNotAuthorized() {
-        categoryDTO.setUserId(99); // Different user
-        when(categoryRepository.existsById(1)).thenReturn(true);
-        when(categoryRepository.findById(1)).thenReturn(Optional.of(category));
+        categoryDTO.setUserId(diffUserId); // Different user
+        when(categoryRepository.existsById(categoryId)).thenReturn(true);
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
 
         assertThrows(SecurityException.class, () -> categoryService.updateCategory(categoryDTO));
     }
 
     @Test
     void updateCategory_shouldThrowIfNotFound() {
-        categoryDTO.setCategoryId(99);
-        when(categoryRepository.existsById(99)).thenReturn(false);
+        categoryDTO.setCategoryId(diffCategoryId);
+        when(categoryRepository.existsById(diffCategoryId)).thenReturn(false);
 
         assertThrows(IllegalArgumentException.class, () -> categoryService.updateCategory(categoryDTO));
     }
 
     @Test
     void deleteCategory_shouldDeleteIfValid() {
-        when(categoryRepository.existsById(1)).thenReturn(true);
+        when(categoryRepository.existsById(categoryId)).thenReturn(true);
         Category categoryU = new Category();
-        categoryU.setUserId(1);
-        categoryU.setCategoryId(1);
-        when(categoryRepository.findById(1)).thenReturn(Optional.of(categoryU));
+        categoryU.setUserId(userId);
+        categoryU.setCategoryId(categoryId);
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(categoryU));
         CategoryDTO categoryDTO = new CategoryDTO();
-        categoryDTO.setUserId(1);
-        categoryDTO.setCategoryId(1);
+        categoryDTO.setUserId(userId);
+        categoryDTO.setCategoryId(categoryId);
         categoryService.deleteCategory(categoryDTO);
 
-        verify(categoryRepository).deleteById(1);
+        verify(categoryRepository).deleteById(categoryId);
     }
 
     @Test
     void deleteCategory_shouldThrowIfNotAuthorized() {
-        categoryDTO.setUserId(99);
+        categoryDTO.setUserId(diffUserId);
         Category categoryU = new Category();
-        categoryU.setUserId(2);
-        when(categoryRepository.findById(1)).thenReturn(Optional.of(categoryU));
+        categoryU.setUserId(userId);
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(categoryU));
         when(categoryRepository.existsById(categoryDTO.getCategoryId())).thenReturn(Boolean.TRUE);
         assertThrows(SecurityException.class, () -> categoryService.deleteCategory(categoryDTO));
     }
 
     @Test
     void validateCategory_shouldThrowIfNotFound() {
-        when(categoryRepository.existsById(1)).thenReturn(false);
+        when(categoryRepository.existsById(categoryId)).thenReturn(false);
         assertThrows(IllegalArgumentException.class, () -> categoryService.validateCategory(categoryDTO));
     }
 
     @Test
     void validateCategoryByUser_shouldThrowIfUserMismatch() {
-        assertThrows(SecurityException.class, () -> categoryService.validateCategoryByUser(categoryDTO, 99));
+        assertThrows(SecurityException.class, () -> categoryService.validateCategoryByUser(categoryDTO, diffUserId));
     }
 }

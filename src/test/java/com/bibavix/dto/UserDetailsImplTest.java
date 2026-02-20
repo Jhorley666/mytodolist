@@ -14,6 +14,8 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.UUID;
+
 @ExtendWith(MockitoExtension.class)
 class UserDetailsImplTest {
 
@@ -47,7 +49,7 @@ class UserDetailsImplTest {
 
         Permission permission = new Permission();
         permission.setPermissionName("task:read");
-        permission.setPermissionId(1);
+        permission.setPermissionId(UUID.randomUUID());
         Set<Permission> permissions = new HashSet<>();
         permissions.add(permission);
         user.setPermissions(permissions);

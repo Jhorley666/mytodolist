@@ -1,5 +1,7 @@
 package com.bibavix.service;
 
+import java.util.UUID;
+
 import com.bibavix.dto.UserTimerDTO;
 import com.bibavix.model.Task;
 import com.bibavix.model.User;
@@ -11,17 +13,17 @@ public interface UserTimerService {
 
     List<UserTimerDTO> getAllUserTimers();
 
-    UserTimerDTO getUserTimerById(Integer userTimerId);
+    UserTimerDTO getUserTimerById(UUID userTimerId);
 
     UserTimerDTO updateUserTimer(UserTimerDTO userTimerDTO);
 
-    void deleteUserTimerById(Integer userTimerId);
+    void deleteUserTimerById(UUID userTimerId);
 
     void onTaskCompleted(Task updatedTask, User user);
 
-    UserTimerDTO startTimer(Integer userId);
+    UserTimerDTO startTimer(UUID userId);
 
-    UserTimerDTO getTimerStatus(Integer userId);
+    UserTimerDTO getTimerStatus(UUID userId);
 
-    UserTimerDTO pauseTimer(Integer userId);
+    UserTimerDTO pauseTimer(UUID userId);
 }

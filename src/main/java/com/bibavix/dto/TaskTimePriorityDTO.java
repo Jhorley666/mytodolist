@@ -5,18 +5,20 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class TaskTimePriorityDTO {
 
     @NotBlank
-    private Integer taskTimePriorityId;
+    private UUID taskTimePriorityId;
     @NotBlank
     private Long time;
     @NotBlank
-    private Integer priorityId;
+    private UUID priorityId;
     @NotBlank
-    private Integer userId;
+    private UUID userId;
 
 }

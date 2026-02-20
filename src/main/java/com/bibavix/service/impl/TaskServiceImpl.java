@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,22 +38,27 @@ public class TaskServiceImpl implements TaskService {
         validateCategoryAndStatus(taskDTO);
         Task task = taskMapper.toEntity(taskDTO);
         task.setUserId(user.getUserId());
-        task.setStatusId(Objects.nonNull(taskDTO.getStatusId()) ? taskDTO.getStatusId().shortValue() : (short) 1);
+        task.setStatusId(taskDTO.getStatusId());
         return taskRepository.save(task);
     }
 
     @Transactional
-    public TaskDTO updateTask(Integer taskId, TaskDTO taskDTO, String username) {
+    public TaskDTO updateTask(UUID taskId, TaskDTO taskDTO, String username) {
         User user = userDetailsService.findUserByUsername(username);
         Task task = findTaskById(taskId);
         if (!task.getUserId().equals(user.getUserId())) {
             throw new SecurityException("User not authorized to update task");
         }
 
-        TaskStatus previousStatus = new TaskStatus();
-        previousStatus.setStatusId(Integer.valueOf(task.getStatusId()));
+        TaskStatus previousStatus = statusRepository.findById(task.getStatusId()).orElse(null);
+        boolean wasCompleted = previousStatus != null && "Completed".equalsIgnoreCase(previousStatus.getName());
 
-        if (previousStatus.getStatusId() == 3 && taskDTO.getStatusId() != 3) {
+        TaskStatus newStatus = taskDTO.getStatusId() != null
+                ? statusRepository.findById(taskDTO.getStatusId()).orElse(null)
+                : null;
+        boolean isCompletedNow = newStatus != null && "Completed".equalsIgnoreCase(newStatus.getName());
+
+        if (wasCompleted && !isCompletedNow) {
             throw new IllegalStateException("Completed tasks cannot be modified");
         }
 
@@ -60,9 +66,7 @@ public class TaskServiceImpl implements TaskService {
         taskMapper.updateTaskFromDTO(taskDTO, task);
         Task updatedTask = taskRepository.save(task);
 
-        boolean transitionedToCompleted = previousStatus.getStatusId() != 3 &&
-                updatedTask.getStatusId() == 3;
-        if (transitionedToCompleted) {
+        if (!wasCompleted && isCompletedNow) {
             log.info("onTaskCompleted");
             userTimerService.onTaskCompleted(updatedTask, user);
         }
@@ -71,7 +75,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Transactional
-    public void deleteTask(Integer taskId, String username) {
+    public void deleteTask(UUID taskId, String username) {
         User user = userDetailsService.findUserByUsername(username);
         Task task = findTaskById(taskId);
         if (!task.getUserId().equals(user.getUserId())) {
@@ -89,7 +93,7 @@ public class TaskServiceImpl implements TaskService {
                 .collect(Collectors.toList());
     }
 
-    public Task findTaskById(Integer taskId) {
+    public Task findTaskById(UUID taskId) {
         return taskRepository.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task with id " + taskId + " not found."));
     }

@@ -1,6 +1,7 @@
 package com.bibavix.service.impl;
 
 import com.bibavix.dto.PriorityDTO;
+import java.util.UUID;
 import com.bibavix.exception.ResourceNotFoundException;
 import com.bibavix.model.Priority;
 import com.bibavix.repository.PriorityRepository;
@@ -37,7 +38,7 @@ public class PriorityServiceImpl implements PriorityService {
     }
 
     @Override
-    public PriorityDTO getPriorityById(Integer priorityId) {
+    public PriorityDTO getPriorityById(UUID priorityId) {
         Priority priority = priorityRepository.findById(priorityId)
                 .orElseThrow(() -> new ResourceNotFoundException("Priority with id " + priorityId + " not found."));
         return priorityMapper.toDTO(priority);
@@ -45,7 +46,7 @@ public class PriorityServiceImpl implements PriorityService {
 
     @Override
     public PriorityDTO updatePriority(PriorityDTO priorityDTO) {
-        Integer priorityId = priorityDTO.getPriorityId();
+        UUID priorityId = priorityDTO.getPriorityId();
         Priority priority = priorityRepository.findById(priorityId)
                 .orElseThrow(() -> new ResourceNotFoundException("Priority with id " + priorityId + " not found."));
         priorityMapper.updatePriorityFromDTO(priorityDTO, priority);
@@ -54,7 +55,7 @@ public class PriorityServiceImpl implements PriorityService {
     }
 
     @Override
-    public void deletePriority(Integer priorityId) {
+    public void deletePriority(UUID priorityId) {
         getPriorityById(priorityId);
         priorityRepository.deleteById(priorityId);
     }

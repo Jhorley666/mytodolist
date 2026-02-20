@@ -1,6 +1,7 @@
 package com.bibavix.service.impl;
 
 import com.bibavix.dto.CategoryDTO;
+import java.util.UUID;
 import com.bibavix.exception.ResourceNotFoundException;
 import com.bibavix.model.Category;
 import com.bibavix.repository.CategoryRepository;
@@ -21,7 +22,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryMapper categoryMapper;
 
     @Override
-    public Integer addCategory(CategoryDTO categoryDTO, Integer userId) {
+    public UUID addCategory(CategoryDTO categoryDTO, UUID userId) {
         Category category = categoryMapper.toEntity(categoryDTO);
         category.setUserId(userId);
         Category savedCategory = categoryRepository.save(category);
@@ -30,7 +31,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<CategoryDTO> getAllCategoriesByUserId(Integer userId) {
+    public List<CategoryDTO> getAllCategoriesByUserId(UUID userId) {
         List<Category> categories = categoryRepository.findAllByUserId(userId);
         return categories.stream()
                 .map(categoryMapper::toDTO)
@@ -38,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDTO getCategoryById(Integer categoryId) {
+    public CategoryDTO getCategoryById(UUID categoryId) {
         Category category = categoryRepository
                 .findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category with id " + categoryId + " not found."));
@@ -71,7 +72,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
     }
 
-    public void validateCategoryByUser(CategoryDTO categoryDTO, Integer userId) {
+    public void validateCategoryByUser(CategoryDTO categoryDTO, UUID userId) {
         if (!categoryDTO.getUserId().equals(userId)) {
             throw new SecurityException("User not authorized to update category");
         }

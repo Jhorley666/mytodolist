@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.UUID;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,16 +41,16 @@ class CategoryControllerTest {
 
     @Test
     void shouldReturnNotNullCategoryWhenFindById() {
-        //Arrange
-        int id = 1;
+        // Arrange
+        UUID id = UUID.randomUUID();
 
-        //Act
+        // Act
         when(userDetails.getUsername()).thenReturn("testuser");
         when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
         when(categoryService.getCategoryById(id)).thenReturn(categoryDTO);
-        ResponseEntity<CategoryDTO> response =  categoryController.getCategoryById(id, userDetails);
+        ResponseEntity<CategoryDTO> response = categoryController.getCategoryById(id, userDetails);
 
-        //Asserts
+        // Asserts
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());

@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBlank;
 
+import java.util.UUID;
+
 @Data
 @Schema(description = "Data Transfer Object for Service operations")
 public class CategoryDTO {
@@ -14,10 +16,10 @@ public class CategoryDTO {
     private String name;
 
     @Schema(description = "Id of the category", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
-    private Integer categoryId;
+    private UUID categoryId;
 
     @Schema(description = "User id", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
-    private Integer userId;
+    private UUID userId;
 
     @Schema(description = "Date modification", example = "2025-06-01", requiredMode = Schema.RequiredMode.REQUIRED)
     private String createdAt;

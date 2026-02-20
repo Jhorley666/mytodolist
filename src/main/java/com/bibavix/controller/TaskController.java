@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Tag(name = "Tasks", description = "Task management APIs")
 @RestController
@@ -33,13 +34,9 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @Operation(
-        summary = "Get all tasks for the authenticated user",
-        description = "Returns a list of all tasks belonging to the authenticated user."
-    )
+    @Operation(summary = "Get all tasks for the authenticated user", description = "Returns a list of all tasks belonging to the authenticated user.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "List of tasks returned",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class)))
+            @ApiResponse(responseCode = "200", description = "List of tasks returned", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class)))
     })
     @GetMapping
     @PreAuthorize("hasAuthority('USER_READ')")
@@ -49,78 +46,61 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
-    @Operation(
-        summary = "Get a task by ID",
-        description = "Returns a task by its ID, only if it belongs to the authenticated user."
-    )
+    @Operation(summary = "Get a task by ID", description = "Returns a task by its ID, only if it belongs to the authenticated user.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Task found",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class))),
-        @ApiResponse(responseCode = "403", description = "Forbidden"),
-        @ApiResponse(responseCode = "404", description = "Task not found")
+            @ApiResponse(responseCode = "200", description = "Task found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Task not found")
     })
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<Task> getTaskById(
-            @Parameter(description = "Task ID", required = true) @PathVariable Integer id,
+            @Parameter(description = "Task ID", required = true) @PathVariable UUID id,
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
         Task task = taskService.findTaskById(id);
         return ResponseEntity.ok(task);
     }
 
-    @Operation(
-        summary = "Create a new task",
-        description = "Creates a new task for the authenticated user."
-    )
+    @Operation(summary = "Create a new task", description = "Creates a new task for the authenticated user.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Task created",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class))),
-        @ApiResponse(responseCode = "400", description = "Invalid input")
+            @ApiResponse(responseCode = "200", description = "Task created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input")
     })
     @PostMapping
     @PreAuthorize("hasAuthority('USER_CREATE')")
     public ResponseEntity<Task> createTask(
-            @Parameter(description = "Task to create", required = true, schema = @Schema(implementation = Task.class))
-            @RequestBody TaskDTO task,
+            @Parameter(description = "Task to create", required = true, schema = @Schema(implementation = Task.class)) @RequestBody TaskDTO task,
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
         Task taskToCreate = taskService.createTask(task, userDetails.getUsername());
         return ResponseEntity.ok(taskToCreate);
     }
 
-    @Operation(
-        summary = "Update a task",
-        description = "Updates a task by its ID, only if it belongs to the authenticated user."
-    )
+    @Operation(summary = "Update a task", description = "Updates a task by its ID, only if it belongs to the authenticated user.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Task updated",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class))),
-        @ApiResponse(responseCode = "403", description = "Forbidden"),
-        @ApiResponse(responseCode = "404", description = "Task not found")
+            @ApiResponse(responseCode = "200", description = "Task updated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Task not found")
     })
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('USER_UPDATE')")
     public ResponseEntity<TaskDTO> updateTask(
-            @Parameter(description = "Task ID", required = true) @PathVariable Integer id,
-            @Parameter(description = "Updated task", required = true, schema = @Schema(implementation = Task.class))
-            @RequestBody TaskDTO updatedTask,
+            @Parameter(description = "Task ID", required = true) @PathVariable UUID id,
+            @Parameter(description = "Updated task", required = true, schema = @Schema(implementation = Task.class)) @RequestBody TaskDTO updatedTask,
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
         TaskDTO taskToUpdate = taskService.updateTask(id, updatedTask, userDetails.getUsername());
         return ResponseEntity.ok(taskToUpdate);
     }
 
-    @Operation(
-        summary = "Delete a task",
-        description = "Deletes a task by its ID, only if it belongs to the authenticated user."
-    )
+    @Operation(summary = "Delete a task", description = "Deletes a task by its ID, only if it belongs to the authenticated user.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Task deleted"),
-        @ApiResponse(responseCode = "403", description = "Forbidden"),
-        @ApiResponse(responseCode = "404", description = "Task not found")
+            @ApiResponse(responseCode = "200", description = "Task deleted"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Task not found")
     })
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('USER_DELETE')")
     public ResponseEntity<ResponseCode> deleteTask(
-            @Parameter(description = "Task ID", required = true) @PathVariable Integer id,
+            @Parameter(description = "Task ID", required = true) @PathVariable UUID id,
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
         taskService.deleteTask(id, userDetails.getUsername());
         return ResponseEntity.ok().build();

@@ -1,6 +1,7 @@
 package com.bibavix.service.impl;
 
 import com.bibavix.dto.TaskStatusDTO;
+import java.util.UUID;
 import com.bibavix.exception.ResourceNotFoundException;
 import com.bibavix.model.TaskStatus;
 import com.bibavix.repository.TaskStatusRepository;
@@ -35,7 +36,7 @@ public class TaskStatusServiceImpl implements TaskStatusService {
     }
 
     @Override
-    public TaskStatusDTO getTaskStatusById(Integer taskStatusId) {
+    public TaskStatusDTO getTaskStatusById(UUID taskStatusId) {
         TaskStatus taskStatus = taskStatusRepository.findById(taskStatusId)
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Task status with id " + taskStatusId + " not found."));
@@ -43,7 +44,7 @@ public class TaskStatusServiceImpl implements TaskStatusService {
     }
 
     @Override
-    public void deleteTaskStatus(Integer taskStatusId) {
+    public void deleteTaskStatus(UUID taskStatusId) {
         getTaskStatusById(taskStatusId);
         taskStatusRepository.deleteById(taskStatusId);
     }

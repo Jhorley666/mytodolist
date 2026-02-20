@@ -1,6 +1,7 @@
 package com.bibavix.service.impl;
 
 import com.bibavix.dto.UserTimerDTO;
+import java.util.UUID;
 import com.bibavix.exception.ResourceNotFoundException;
 import com.bibavix.model.Task;
 import com.bibavix.model.User;
@@ -31,7 +32,7 @@ public class UserTimerServiceImpl implements UserTimerService {
     private final TaskTimePriorityRepository taskTimePriorityRepository;
 
     @Override
-    public UserTimerDTO startTimer(Integer userId) {
+    public UserTimerDTO startTimer(UUID userId) {
         UserTimer userTimer = userTimerRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("UserTimer not found for userId " + userId));
 
@@ -57,7 +58,7 @@ public class UserTimerServiceImpl implements UserTimerService {
 
     @Override
     @Transactional
-    public UserTimerDTO pauseTimer(Integer userId) {
+    public UserTimerDTO pauseTimer(UUID userId) {
 
         UserTimer userTimer = userTimerRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("UserTimer not found"));
@@ -83,7 +84,7 @@ public class UserTimerServiceImpl implements UserTimerService {
 
     @Override
     @Transactional
-    public UserTimerDTO getTimerStatus(Integer userId) {
+    public UserTimerDTO getTimerStatus(UUID userId) {
 
         UserTimer userTimer = userTimerRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -114,7 +115,7 @@ public class UserTimerServiceImpl implements UserTimerService {
     }
 
     @Override
-    public UserTimerDTO getUserTimerById(Integer userTimerId) {
+    public UserTimerDTO getUserTimerById(UUID userTimerId) {
         UserTimer userTimer = userTimerRepository.findById(userTimerId)
                 .orElseThrow(() -> new ResourceNotFoundException("UserTimer with id " + userTimerId + " not found."));
         return userTimerMapper.toDTO(userTimer);
@@ -122,7 +123,7 @@ public class UserTimerServiceImpl implements UserTimerService {
 
     @Override
     public UserTimerDTO updateUserTimer(UserTimerDTO userTimerDTO) {
-        Integer userTimerId = userTimerDTO.getIdUserTimer();
+        UUID userTimerId = userTimerDTO.getIdUserTimer();
         UserTimer userTimer = userTimerRepository.findById(userTimerId)
                 .orElseThrow(() -> new ResourceNotFoundException("UserTimer with id " + userTimerId + " not found."));
 
@@ -132,7 +133,7 @@ public class UserTimerServiceImpl implements UserTimerService {
     }
 
     @Override
-    public void deleteUserTimerById(Integer userTimerId) {
+    public void deleteUserTimerById(UUID userTimerId) {
         if (!userTimerRepository.existsById(userTimerId)) {
             throw new ResourceNotFoundException("UserTimer with id " + userTimerId + " not found.");
         }
