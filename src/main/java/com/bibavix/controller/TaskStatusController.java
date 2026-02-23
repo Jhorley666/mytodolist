@@ -2,6 +2,7 @@ package com.bibavix.controller;
 
 import com.bibavix.dto.TaskStatusDTO;
 import com.bibavix.service.TaskStatusService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,7 @@ public class TaskStatusController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('USER_READ')")
     public List<TaskStatusDTO> getAllTaskStatus() {
         return taskStatusService.getAllTaskStatus();
     }

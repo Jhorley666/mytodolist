@@ -27,7 +27,7 @@ public class UserTimerController {
     private final com.bibavix.service.impl.UserDetailsServiceImpl userDetailsService;
 
     @PostMapping("/start")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<UserTimerDTO> startTimer(
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
         com.bibavix.model.User user = userDetailsService.findUserByUsername(userDetails.getUsername());
@@ -36,7 +36,7 @@ public class UserTimerController {
     }
 
     @PostMapping("/pause")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<UserTimerDTO> pauseTimer(
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
         com.bibavix.model.User user = userDetailsService.findUserByUsername(userDetails.getUsername());
@@ -45,7 +45,7 @@ public class UserTimerController {
     }
 
     @GetMapping("/status")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<UserTimerDTO> getTimerStatus(
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
         com.bibavix.model.User user = userDetailsService.findUserByUsername(userDetails.getUsername());
@@ -54,7 +54,7 @@ public class UserTimerController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<UserTimerDTO> createUserTimer(
             @Parameter(description = "UserTimer data", required = true, schema = @Schema(implementation = UserTimer.class)) @RequestBody UserTimerDTO userTimerDTO) {
         UserTimerDTO createdUserTimer = userTimerService.createUserTimer(userTimerDTO);
@@ -62,14 +62,14 @@ public class UserTimerController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<List<UserTimerDTO>> getAllUserTimers() {
         List<UserTimerDTO> userTimers = userTimerService.getAllUserTimers();
         return ResponseEntity.ok(userTimers);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<UserTimerDTO> getUserTimerById(
             @Parameter(description = "UserTimer ID", required = true) @PathVariable UUID id) {
         UserTimerDTO userTimer = userTimerService.getUserTimerById(id);
@@ -77,7 +77,7 @@ public class UserTimerController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<UserTimerDTO> updateUserTimer(
             @Parameter(description = "UserTimer ID", required = true) @PathVariable UUID id,
             @Parameter(description = "UserTimer data", required = true, schema = @Schema(implementation = UserTimer.class)) @RequestBody UserTimerDTO userTimerDTO) {
@@ -87,7 +87,7 @@ public class UserTimerController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<ResponseCode> deleteUserTimer(
             @Parameter(description = "UserTimer ID", required = true) @PathVariable UUID id) {
         userTimerService.deleteUserTimerById(id);

@@ -24,7 +24,7 @@ public class PriorityController {
     private final PriorityService priorityService;
 
     @PostMapping
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<PriorityDTO> createPriority(
             @Parameter(description = "Priority data", required = true, schema = @Schema(implementation = Priority.class)) @RequestBody PriorityDTO priorityDTO) {
         PriorityDTO createdPriority = priorityService.createPriority(priorityDTO);
@@ -32,14 +32,14 @@ public class PriorityController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<List<PriorityDTO>> getAllPriorities() {
         List<PriorityDTO> priorities = priorityService.getAllPriorities();
         return ResponseEntity.ok(priorities);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<PriorityDTO> getPriorityById(
             @Parameter(description = "Priority ID", required = true) @PathVariable UUID id) {
         PriorityDTO priority = priorityService.getPriorityById(id);
@@ -47,7 +47,7 @@ public class PriorityController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<PriorityDTO> updatePriority(
             @Parameter(description = "Priority ID", required = true) @PathVariable UUID id,
             @Parameter(description = "Priority data", required = true, schema = @Schema(implementation = Priority.class)) @RequestBody PriorityDTO priorityDTO) {
@@ -57,7 +57,7 @@ public class PriorityController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<ResponseCode> deletePriority(
             @Parameter(description = "Priority ID", required = true) @PathVariable UUID id) {
         priorityService.deletePriority(id);

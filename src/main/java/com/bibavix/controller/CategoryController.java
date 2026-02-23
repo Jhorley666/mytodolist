@@ -30,7 +30,7 @@ public class CategoryController {
         private final UserRepository userRepository;
 
         @PostMapping
-        @PreAuthorize("hasRole('USER')")
+        @PreAuthorize("hasAuthority('USER_READ')")
         public ResponseEntity<CategoryDTO> createCategory(
                         @RequestBody CategoryDTO categoryDTO,
                         @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
@@ -41,7 +41,7 @@ public class CategoryController {
         }
 
         @PutMapping("/{id}")
-        @PreAuthorize("hasRole('USER')")
+        @PreAuthorize("hasAuthority('USER_READ')")
         public ResponseEntity<CategoryDTO> updateCategory(
                         @Parameter(description = "Category ID", required = true) @PathVariable UUID id,
                         @Parameter(description = "Category task", required = true, schema = @Schema(implementation = Category.class)) @RequestBody CategoryDTO category,
@@ -57,7 +57,7 @@ public class CategoryController {
         }
 
         @GetMapping
-        @PreAuthorize("hasRole('USER')")
+        @PreAuthorize("hasAuthority('USER_READ')")
         public ResponseEntity<List<CategoryDTO>> getAllCategoriesByUserId(
                         @AuthenticationPrincipal UserDetails userDetails) {
                 User user = userRepository.findByUsername(userDetails.getUsername())
@@ -67,7 +67,7 @@ public class CategoryController {
         }
 
         @DeleteMapping("/{id}")
-        @PreAuthorize("hasRole('USER')")
+        @PreAuthorize("hasAuthority('USER_READ')")
         public ResponseEntity<ResponseCode> deleteCategory(
                         @Parameter(description = "Category ID", required = true) @PathVariable UUID id,
                         @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
@@ -81,7 +81,7 @@ public class CategoryController {
         }
 
         @GetMapping("/{id}")
-        @PreAuthorize("hasRole('USER')")
+        @PreAuthorize("hasAuthority('USER_READ')")
         public ResponseEntity<CategoryDTO> getCategoryById(
                         @Parameter(description = "Category ID", required = true) @PathVariable UUID id,
                         @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {

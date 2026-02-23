@@ -26,7 +26,7 @@ public class TaskTimePriorityController {
     private final TaskTimePriorityService taskTimePriorityService;
 
     @PostMapping
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<TaskTimePriorityDTO> createTaskTimePriority(
             @Parameter(description = "TaskTimePriority data", required = true, schema = @Schema(implementation = TaskTimePriority.class)) @RequestBody TaskTimePriorityDTO taskTimePriorityDTO,
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -36,14 +36,14 @@ public class TaskTimePriorityController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<List<TaskTimePriorityDTO>> getAllTaskTimePriorities() {
         List<TaskTimePriorityDTO> taskTimePriorities = taskTimePriorityService.getAllTaskTimePriorities();
         return ResponseEntity.ok(taskTimePriorities);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<TaskTimePriorityDTO> getTaskTimePriorityById(
             @Parameter(description = "TaskTimePriority ID", required = true) @PathVariable UUID id,
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -53,7 +53,7 @@ public class TaskTimePriorityController {
     }
 
     @GetMapping("/priority/{priorityId}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<TaskTimePriorityDTO> getTaskTimePriorityByPriorityId(
             @Parameter(description = "Priority ID", required = true) @PathVariable UUID priorityId,
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -63,7 +63,7 @@ public class TaskTimePriorityController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<TaskTimePriorityDTO> updateTaskTimePriority(
             @Parameter(description = "TaskTimePriority ID", required = true) @PathVariable UUID id,
             @Parameter(description = "TaskTimePriority data", required = true, schema = @Schema(implementation = TaskTimePriority.class)) @RequestBody TaskTimePriorityDTO taskTimePriorityDTO,
@@ -75,7 +75,7 @@ public class TaskTimePriorityController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<ResponseCode> deleteTaskTimePriority(
             @Parameter(description = "TaskTimePriority ID", required = true) @PathVariable UUID id,
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -84,7 +84,7 @@ public class TaskTimePriorityController {
     }
 
     @GetMapping("/user")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public ResponseEntity<List<TaskTimePriorityDTO>> getTaskTimePrioritiesByUser(
             @AuthenticationPrincipal UserDetails userDetails) {
         List<TaskTimePriorityDTO> taskTimePriorities = taskTimePriorityService
